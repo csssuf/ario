@@ -17,13 +17,13 @@
  *
  */
 
-#include "sources/ario-search.h"
 #include <gtk/gtk.h>
 #include <string.h>
 #include <config.h>
 #include <glib/gi18n.h>
 #include "widgets/ario-songlist.h"
 #include "widgets/ario-playlist.h"
+#include "sources/ario-search.h"
 #include "shell/ario-shell-songinfos.h"
 #include "ario-util.h"
 #include "ario-debug.h"
@@ -59,6 +59,8 @@ static void ario_search_do_search (GtkButton *button,
 struct ArioSearchPrivate
 {
         GtkWidget *searchs;
+
+        GtkTooltips *tooltips;
 
         GtkWidget *vbox;
         GtkWidget *plus_button;
@@ -163,6 +165,8 @@ ario_search_init (ArioSearch *search)
         gtk_container_set_border_width (GTK_CONTAINER (search->priv->vbox), 10);
 
         hbox = gtk_hbox_new (FALSE, 0);
+        search->priv->tooltips = gtk_tooltips_new ();
+        gtk_tooltips_enable (search->priv->tooltips);
 
         /* Plus button */
         image = gtk_image_new_from_stock (GTK_STOCK_ADD,
@@ -174,16 +178,18 @@ ario_search_init (ArioSearch *search)
                           "clicked",
                           G_CALLBACK (ario_search_do_plus),
                           search);
-        gtk_widget_set_tooltip_text (GTK_WIDGET (search->priv->plus_button),
-                                     _("Add a search criteria"));
+        gtk_tooltips_set_tip (GTK_TOOLTIPS (search->priv->tooltips),
+                              GTK_WIDGET (search->priv->plus_button),
+                              _("Add a search criteria"), NULL);
         /* Search button */
         search->priv->search_button = gtk_button_new_from_stock (GTK_STOCK_FIND);
         g_signal_connect (search->priv->search_button,
                           "clicked",
                           G_CALLBACK (ario_search_do_search),
                           search);
-        gtk_widget_set_tooltip_text (GTK_WIDGET (search->priv->search_button),
-                                     _("Search songs in the library"));
+        gtk_tooltips_set_tip (GTK_TOOLTIPS (search->priv->tooltips),
+                              GTK_WIDGET (search->priv->search_button),
+                              _("Search songs in the library"), NULL);
 
         gtk_box_pack_start (GTK_BOX (hbox),
                             search->priv->plus_button,
@@ -358,8 +364,9 @@ ario_search_do_plus (GtkButton *button,
                           "clicked",
                           G_CALLBACK (ario_search_do_minus),
                           search);
-        gtk_widget_set_tooltip_text (GTK_WIDGET (search_constraint->minus_button),
-                                     _("Remove a search criteria"));
+        gtk_tooltips_set_tip (GTK_TOOLTIPS (search->priv->tooltips),
+                              GTK_WIDGET (search_constraint->minus_button),
+                              _("Remove a search criteria"), NULL);
 
         renderer = gtk_cell_renderer_text_new ();
         gtk_cell_layout_clear (GTK_CELL_LAYOUT (search_constraint->combo_box));

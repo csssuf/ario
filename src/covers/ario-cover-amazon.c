@@ -17,7 +17,6 @@
  *
  */
 
-#include "covers/ario-cover-amazon.h"
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libxml/xmlmemory.h>
@@ -25,6 +24,7 @@
 #include <string.h>
 #include <glib/gi18n.h>
 #include "lib/ario-conf.h"
+#include "covers/ario-cover-amazon.h"
 #include "covers/ario-cover.h"
 #include "servers/ario-server.h"
 #include "ario-util.h"

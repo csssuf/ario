@@ -17,7 +17,6 @@
  *
  */
 
-#include "lyrics/ario-lyrics-lyricwiki.h"
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <libxml/xmlmemory.h>
@@ -25,6 +24,7 @@
 #include <string.h>
 #include <glib/gi18n.h>
 #include "lib/ario-conf.h"
+#include "lyrics/ario-lyrics-lyricwiki.h"
 #include "ario-util.h"
 #include "preferences/ario-preferences.h"
 #include "ario-debug.h"

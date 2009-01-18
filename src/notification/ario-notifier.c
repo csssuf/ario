@@ -17,8 +17,8 @@
  *
  */
 
-#include "notification/ario-notifier.h"
 #include <config.h>
+#include "notification/ario-notifier.h"
 #include "ario-debug.h"
 
 G_DEFINE_TYPE (ArioNotifier, ario_notifier, G_TYPE_OBJECT)

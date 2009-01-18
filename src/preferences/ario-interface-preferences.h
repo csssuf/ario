@@ -17,11 +17,10 @@
  *
  */
 
+#include <gtk/gtkdialog.h>
+
 #ifndef __ARIO_INTERFACE_PREFERENCES_H
 #define __ARIO_INTERFACE_PREFERENCES_H
-
-#include <glib.h>
-#include <gtk/gtkvbox.h>
 
 G_BEGIN_DECLS
 
@@ -36,14 +35,14 @@ typedef struct ArioInterfacePreferencesPrivate ArioInterfacePreferencesPrivate;
 
 typedef struct
 {
-        GtkVBox parent;
+        GtkDialog parent;
 
         ArioInterfacePreferencesPrivate *priv;
 } ArioInterfacePreferences;
 
 typedef struct
 {
-        GtkVBoxClass parent_class;
+        GtkDialogClass parent_class;
 } ArioInterfacePreferencesClass;
 
 GType              ario_interface_preferences_get_type         (void) G_GNUC_CONST;

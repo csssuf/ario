@@ -17,13 +17,13 @@
  *
  */
 
-#include "widgets/ario-playlist.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <string.h>
 #include <stdlib.h>
 #include <glib/gi18n.h>
 #include "lib/ario-conf.h"
+#include "widgets/ario-playlist.h"
 #include "servers/ario-server.h"
 #include "ario-util.h"
 #include "ario-debug.h"
@@ -1261,20 +1261,20 @@ ario_playlist_cmd_songs_properties (GtkAction *action,
 {
         ARIO_LOG_FUNCTION_START
         GSList *paths = NULL;
+        GList *songs;
         GtkWidget *songinfos;
 
         gtk_tree_selection_selected_foreach (playlist->priv->selection,
                                              ario_playlist_selection_properties_foreach,
                                              &paths);
 
-        if (paths) {
-                songinfos = ario_shell_songinfos_new (paths);
-                if (songinfos)
-                        gtk_widget_show_all (songinfos);
+        songs = ario_server_get_songs_info (paths);
+        g_slist_foreach (paths, (GFunc) g_free, NULL);
+        g_slist_free (paths);
 
-                g_slist_foreach (paths, (GFunc) g_free, NULL);
-                g_slist_free (paths);
-        }
+        songinfos = ario_shell_songinfos_new (songs);
+        if (songinfos)
+                gtk_widget_show_all (songinfos);
 }
 
 static gboolean

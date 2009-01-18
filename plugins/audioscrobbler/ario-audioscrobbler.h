@@ -25,9 +25,9 @@
 #ifndef __ARIO_AUDIOSCROBBLER_H
 #define __ARIO_AUDIOSCROBBLER_H
 
-#include <glib.h>
-
 G_BEGIN_DECLS
+
+#include <glib.h>
 
 #include <gmodule.h>
 #include "plugins/ario-plugin.h"

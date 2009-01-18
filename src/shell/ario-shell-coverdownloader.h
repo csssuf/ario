@@ -17,11 +17,10 @@
  *
  */
 
+
+
 #ifndef __ARIO_SHELL_COVERDOWNLOADER_H
 #define __ARIO_SHELL_COVERDOWNLOADER_H
-
-#include <glib.h>
-#include <gtk/gtkwindow.h>
 
 G_BEGIN_DECLS
 

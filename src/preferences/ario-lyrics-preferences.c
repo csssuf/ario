@@ -17,7 +17,6 @@
  *
  */
 
-#include "preferences/ario-lyrics-preferences.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -25,6 +24,7 @@
 #include <string.h>
 #include <time.h>
 #include <glib/gi18n.h>
+#include "preferences/ario-lyrics-preferences.h"
 #include "preferences/ario-preferences.h"
 #include "lyrics/ario-lyrics-manager.h"
 #include "lib/rb-glade-helpers.h"

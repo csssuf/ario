@@ -20,9 +20,8 @@
 #ifndef __ARIO_SONGLIST_H
 #define __ARIO_SONGLIST_H
 
-#include <glib.h>
 #include <gtk/gtktreeview.h>
-#include <gtk/gtkuimanager.h>
+#include <config.h>
 
 G_BEGIN_DECLS
 

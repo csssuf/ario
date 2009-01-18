@@ -17,11 +17,11 @@
  *
  */
 
-#include "sources/ario-tree.h"
 #include <gtk/gtk.h>
 #include <string.h>
 #include "lib/ario-conf.h"
 #include <glib/gi18n.h>
+#include "sources/ario-tree.h"
 #include "ario-util.h"
 #include "covers/ario-cover.h"
 #include "shell/ario-shell-coverselect.h"
@@ -1258,19 +1258,19 @@ ario_tree_cmd_songs_properties (ArioTree *tree)
 {
         ARIO_LOG_FUNCTION_START
         GSList *paths = NULL;
+        GList *songs;
         GtkWidget *songinfos;
 
         gtk_tree_selection_selected_foreach (tree->priv->selection,
                                              get_selected_songs_foreach,
                                              &paths);
 
-        if (paths) {
-                songinfos = ario_shell_songinfos_new (paths);
-                if (songinfos)
-                        gtk_widget_show_all (songinfos);
+        songs = ario_server_get_songs_info (paths);
+        g_slist_foreach (paths, (GFunc) g_free, NULL);
+        g_slist_free (paths);
 
-                g_slist_foreach (paths, (GFunc) g_free, NULL);
-                g_slist_free (paths);
-        }
+        songinfos = ario_shell_songinfos_new (songs);
+        if (songinfos)
+                gtk_widget_show_all (songinfos);
 }
 

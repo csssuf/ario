@@ -17,7 +17,6 @@
  *
  */
 
-#include "widgets/ario-firstlaunch.h"
 #include <gtk/gtk.h>
 #include <config.h>
 #include <string.h>
@@ -26,6 +25,7 @@
 #include <glade/glade.h>
 #include "lib/rb-glade-helpers.h"
 #include "lib/ario-conf.h"
+#include "widgets/ario-firstlaunch.h"
 #include "preferences/ario-preferences.h"
 #include "ario-profiles.h"
 #include "widgets/ario-connection-widget.h"

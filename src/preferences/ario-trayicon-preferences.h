@@ -17,11 +17,10 @@
  *
  */
 
+#include <gtk/gtkdialog.h>
+
 #ifndef __ARIO_TRAYICON_PREFERENCES_H
 #define __ARIO_TRAYICON_PREFERENCES_H
-
-#include <glib.h>
-#include <gtk/gtkvbox.h>
 
 G_BEGIN_DECLS
 
@@ -36,14 +35,14 @@ typedef struct ArioTrayiconPreferencesPrivate ArioTrayiconPreferencesPrivate;
 
 typedef struct
 {
-        GtkVBox parent;
+        GtkDialog parent;
 
         ArioTrayiconPreferencesPrivate *priv;
 } ArioTrayiconPreferences;
 
 typedef struct
 {
-        GtkVBoxClass parent_class;
+        GtkDialogClass parent_class;
 } ArioTrayiconPreferencesClass;
 
 GType              ario_trayicon_preferences_get_type         (void) G_GNUC_CONST;

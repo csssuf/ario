@@ -20,7 +20,6 @@
  * Boston, MA 02110-1301  USA.
  */
 
-#include "ario-python-module.h"
 #include <config.h>
 #include <pygobject.h>
 #include <pygtk/pygtk.h>
@@ -29,6 +28,7 @@
 
 #include <gmodule.h>
 
+#include "ario-python-module.h"
 #include "ario-python-plugin.h"
 #include "ario-debug.h"
 

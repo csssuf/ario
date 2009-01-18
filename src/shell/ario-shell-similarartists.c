@@ -17,7 +17,6 @@
  *
  */
 
-#include "shell/ario-shell-similarartists.h"
 #include <config.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
@@ -25,6 +24,7 @@
 #include <libxml/parser.h>
 #include <time.h>
 #include <glib/gi18n.h>
+#include "shell/ario-shell-similarartists.h"
 #include "lib/rb-glade-helpers.h"
 #include "widgets/ario-playlist.h"
 #include "ario-debug.h"

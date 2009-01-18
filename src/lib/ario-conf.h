@@ -21,8 +21,6 @@
 #ifndef ARIO_CONF_H
 #define ARIO_CONF_H
 
-#include <glib.h>
-
 typedef void    (*ArioNotifyFunc)               (guint notification_id,
                                                  gpointer user_data);
 

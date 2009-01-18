@@ -23,8 +23,6 @@
 
 #define COVER_SIZE 70
 
-#include <glib.h>
-
 G_BEGIN_DECLS
 
 typedef enum

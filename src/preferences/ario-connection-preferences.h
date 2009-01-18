@@ -17,11 +17,10 @@
  *
  */
 
+#include <gtk/gtkvbox.h>
+
 #ifndef __ARIO_CONNECTION_PREFERENCES_H
 #define __ARIO_CONNECTION_PREFERENCES_H
-
-#include <glib.h>
-#include <gtk/gtkvbox.h>
 
 G_BEGIN_DECLS
 
@@ -43,7 +42,7 @@ typedef struct
 
 typedef struct
 {
-        GtkVBoxClass parent_class;
+        GtkDialogClass parent_class;
 } ArioConnectionPreferencesClass;
 
 GType              ario_connection_preferences_get_type         (void) G_GNUC_CONST;

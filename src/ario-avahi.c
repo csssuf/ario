@@ -17,7 +17,6 @@
  *
  */
 
-#include "ario-avahi.h"
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <config.h>
@@ -32,6 +31,7 @@
 #include <avahi-common/domain.h>
 #include <avahi-common/error.h>
 #include <avahi-common/simple-watch.h>
+#include "ario-avahi.h"
 #include "ario-debug.h"
 
 #define SERVICE_TYPE "_mpd._tcp"

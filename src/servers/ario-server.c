@@ -17,6 +17,7 @@
  *
  */
 
+#include "servers/ario-server.h"
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -25,7 +26,6 @@
 #include <glib/gi18n.h>
 #include "lib/ario-conf.h"
 #include "servers/ario-mpd.h"
-#include "servers/ario-server.h"
 #ifdef ENABLE_XMMS2
 #include "servers/ario-xmms.h"
 #endif
@@ -142,7 +142,7 @@ ario_server_class_init (ArioServerClass *klass)
                 g_signal_new ("random_changed",
                               G_OBJECT_CLASS_TYPE (object_class),
                               G_SIGNAL_RUN_LAST,
-                              G_STRUCT_OFFSET (ArioServerClass, playlist_changed),
+                              G_STRUCT_OFFSET (ArioServerClass, random_changed),
                               NULL, NULL,
                               g_cclosure_marshal_VOID__VOID,
                               G_TYPE_NONE,
@@ -152,7 +152,7 @@ ario_server_class_init (ArioServerClass *klass)
                 g_signal_new ("repeat_changed",
                               G_OBJECT_CLASS_TYPE (object_class),
                               G_SIGNAL_RUN_LAST,
-                              G_STRUCT_OFFSET (ArioServerClass, playlist_changed),
+                              G_STRUCT_OFFSET (ArioServerClass, repeat_changed),
                               NULL, NULL,
                               g_cclosure_marshal_VOID__VOID,
                               G_TYPE_NONE,
@@ -266,7 +266,6 @@ void
 ario_server_shutdown (void)
 {
         ARIO_LOG_FUNCTION_START
-        ario_server_disconnect ();
         g_object_unref (interface);
 }
 

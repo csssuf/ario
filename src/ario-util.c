@@ -17,6 +17,7 @@
  *
  */
 
+#include "ario-util.h"
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
@@ -26,7 +27,6 @@
 #include <curl/curl.h>
 #include <glib/gi18n.h>
 #include "lib/ario-conf.h"
-#include "ario-util.h"
 #include "ario-debug.h"
 #include "covers/ario-cover.h"
 #include "preferences/ario-preferences.h"
@@ -393,7 +393,7 @@ ario_util_string_replace (char **string,
 
         strsplit = g_strsplit (*string, old, 0);
 
-        if (!strsplit[0])
+        if (!strsplit || !strsplit[0])
                 return;
 
         str = g_string_new (strsplit[0]);

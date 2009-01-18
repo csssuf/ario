@@ -23,7 +23,7 @@
  *
  */
 
-#define _XOPEN_SOURCE
+#include "ario-audioscrobbler.h"
 #include "config.h"
 #include <string.h>
 #include <stdlib.h>
@@ -33,7 +33,6 @@
 #include <gtk/gtk.h>
 
 #include <libsoup/soup.h>
-#include "ario-audioscrobbler.h"
 #include "ario-debug.h"
 #include "lib/ario-conf.h"
 #include "ario-util.h"

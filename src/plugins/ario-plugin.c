@@ -20,11 +20,11 @@
  * Boston, MA 02110-1301  USA.
  */
 
+#include "plugins/ario-plugin.h"
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include "plugins/ario-plugin.h"
 #include "ario-util.h"
 
 G_DEFINE_TYPE (ArioPlugin, ario_plugin, G_TYPE_OBJECT)
@@ -108,7 +108,6 @@ ario_plugin_get_plugin_paths (void)
 
         path = g_build_filename (ario_util_config_dir (), "plugins", NULL);
         paths = g_slist_append (paths, path);
-
 
         path = g_strdup (ARIO_PLUGIN_DIR);
         paths = g_slist_append (paths, path);

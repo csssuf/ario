@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 21:03+0100\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
 "PO-Revision-Date: 2008-12-15 03:59+0000\n"
 "Last-Translator: Dostojevskji <darkangel_nr1@hotmail.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -767,7 +767,7 @@ msgstr "Fel vid skrivning till fil"
 
 #: ../src/shell/ario-shell-lyrics.c:43
 #: ../src/shell/ario-shell-preferences.c:129
-#: ../src/shell/ario-shell-songinfos.c:249
+#: ../src/shell/ario-shell-songinfos.c:209
 msgid "Lyrics"
 msgstr "Låttext"
 
@@ -801,16 +801,11 @@ msgstr "Bild"
 msgid "Songs"
 msgstr "Låtar"
 
-#: ../src/shell/ario-shell-songinfos.c:227
-#: ../src/shell/ario-shell-songinfos.c:244
-#: ../src/shell/ario-shell-songinfos.c:475
+#: ../src/shell/ario-shell-songinfos.c:115
+#: ../src/shell/ario-shell-songinfos.c:204
+#: ../src/shell/ario-shell-songinfos.c:313
 msgid "Song Properties"
 msgstr "Låtegenskaper"
-
-#: ../src/shell/ario-shell-songinfos.c:410
-#, fuzzy
-msgid "Error saving tags of file:"
-msgstr "Fel vid skrivning till fil"
 
 #: ../src/widgets/ario-connection-widget.c:345
 msgid "Profile"
@@ -936,15 +931,15 @@ msgid "_Go to playing song"
 msgstr "_Gå till spela sång"
 
 #. Create the widgets
-#: ../src/widgets/ario-playlist.c:1326
+#: ../src/widgets/ario-playlist.c:1323
 msgid "Save playlist"
 msgstr "Spara spellista"
 
-#: ../src/widgets/ario-playlist.c:1336
+#: ../src/widgets/ario-playlist.c:1333
 msgid "Playlist name :"
 msgstr "Spellistenamn:"
 
-#: ../src/widgets/ario-playlist.c:1361
+#: ../src/widgets/ario-playlist.c:1358
 msgid "Playlist already exists. Do you want to ovewrite it?"
 msgstr "Spellistan finns redan, vill du skriva över den?"
 

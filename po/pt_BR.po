@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 21:03+0100\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
 "PO-Revision-Date: 2009-01-03 15:05+0000\n"
 "Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <pt_BR@li.org>\n"
@@ -787,7 +787,7 @@ msgstr "Erro ao salvar o arquivo"
 
 #: ../src/shell/ario-shell-lyrics.c:43
 #: ../src/shell/ario-shell-preferences.c:129
-#: ../src/shell/ario-shell-songinfos.c:249
+#: ../src/shell/ario-shell-songinfos.c:209
 msgid "Lyrics"
 msgstr "Letras"
 
@@ -821,16 +821,11 @@ msgstr "Imagem"
 msgid "Songs"
 msgstr "Músicas"
 
-#: ../src/shell/ario-shell-songinfos.c:227
-#: ../src/shell/ario-shell-songinfos.c:244
-#: ../src/shell/ario-shell-songinfos.c:475
+#: ../src/shell/ario-shell-songinfos.c:115
+#: ../src/shell/ario-shell-songinfos.c:204
+#: ../src/shell/ario-shell-songinfos.c:313
 msgid "Song Properties"
 msgstr "Propriedades da Música"
-
-#: ../src/shell/ario-shell-songinfos.c:410
-#, fuzzy
-msgid "Error saving tags of file:"
-msgstr "Erro ao salvar o arquivo"
 
 #: ../src/widgets/ario-connection-widget.c:345
 msgid "Profile"
@@ -958,15 +953,15 @@ msgid "_Go to playing song"
 msgstr "_Vá para a canção em execução"
 
 #. Create the widgets
-#: ../src/widgets/ario-playlist.c:1326
+#: ../src/widgets/ario-playlist.c:1323
 msgid "Save playlist"
 msgstr "Salvar lista de execução"
 
-#: ../src/widgets/ario-playlist.c:1336
+#: ../src/widgets/ario-playlist.c:1333
 msgid "Playlist name :"
 msgstr "Nome da lista de execução :"
 
-#: ../src/widgets/ario-playlist.c:1361
+#: ../src/widgets/ario-playlist.c:1358
 msgid "Playlist already exists. Do you want to ovewrite it?"
 msgstr "A lista de execução já existe. Deeja sobreescrevê-la?"
 

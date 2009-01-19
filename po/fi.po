@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario_ario-fi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 21:03+0100\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
 "PO-Revision-Date: 2008-12-15 06:24+0000\n"
 "Last-Translator: Marc Pavot <marc.pavot@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -764,7 +764,7 @@ msgstr "Virhe tallennettaessa tiedostoa"
 
 #: ../src/shell/ario-shell-lyrics.c:43
 #: ../src/shell/ario-shell-preferences.c:129
-#: ../src/shell/ario-shell-songinfos.c:249
+#: ../src/shell/ario-shell-songinfos.c:209
 msgid "Lyrics"
 msgstr "Sanoitukset"
 
@@ -798,16 +798,11 @@ msgstr "Kuva"
 msgid "Songs"
 msgstr "Kappaleet"
 
-#: ../src/shell/ario-shell-songinfos.c:227
-#: ../src/shell/ario-shell-songinfos.c:244
-#: ../src/shell/ario-shell-songinfos.c:475
+#: ../src/shell/ario-shell-songinfos.c:115
+#: ../src/shell/ario-shell-songinfos.c:204
+#: ../src/shell/ario-shell-songinfos.c:313
 msgid "Song Properties"
 msgstr "Kappaleen ominaisuudet"
-
-#: ../src/shell/ario-shell-songinfos.c:410
-#, fuzzy
-msgid "Error saving tags of file:"
-msgstr "Virhe tallennettaessa tiedostoa"
 
 #: ../src/widgets/ario-connection-widget.c:345
 msgid "Profile"
@@ -935,15 +930,15 @@ msgid "_Go to playing song"
 msgstr "_Siirry parhaillaan soitettavaan kappaleeseen"
 
 #. Create the widgets
-#: ../src/widgets/ario-playlist.c:1326
+#: ../src/widgets/ario-playlist.c:1323
 msgid "Save playlist"
 msgstr "Tallenna soittolista"
 
-#: ../src/widgets/ario-playlist.c:1336
+#: ../src/widgets/ario-playlist.c:1333
 msgid "Playlist name :"
 msgstr "Soittolistan nimi :"
 
-#: ../src/widgets/ario-playlist.c:1361
+#: ../src/widgets/ario-playlist.c:1358
 msgid "Playlist already exists. Do you want to ovewrite it?"
 msgstr "Soittolista on jo olemassa. Haluatko korvata sen?"
 

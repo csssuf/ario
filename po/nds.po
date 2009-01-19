@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 21:03+0100\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
 "PO-Revision-Date: 2008-12-15 06:19+0000\n"
 "Last-Translator: Marc Pavot <marc.pavot@gmail.com>\n"
 "Language-Team: German, Low <nds@li.org>\n"
@@ -749,7 +749,7 @@ msgstr "Fehler on Datei spekern"
 
 #: ../src/shell/ario-shell-lyrics.c:43
 #: ../src/shell/ario-shell-preferences.c:129
-#: ../src/shell/ario-shell-songinfos.c:249
+#: ../src/shell/ario-shell-songinfos.c:209
 msgid "Lyrics"
 msgstr "Leedtext"
 
@@ -783,16 +783,11 @@ msgstr "Bill"
 msgid "Songs"
 msgstr "Leeder"
 
-#: ../src/shell/ario-shell-songinfos.c:227
-#: ../src/shell/ario-shell-songinfos.c:244
-#: ../src/shell/ario-shell-songinfos.c:475
+#: ../src/shell/ario-shell-songinfos.c:115
+#: ../src/shell/ario-shell-songinfos.c:204
+#: ../src/shell/ario-shell-songinfos.c:313
 msgid "Song Properties"
 msgstr "Leed Eegenschaften"
-
-#: ../src/shell/ario-shell-songinfos.c:410
-#, fuzzy
-msgid "Error saving tags of file:"
-msgstr "Fehler on Datei spekern"
 
 #: ../src/widgets/ario-connection-widget.c:345
 msgid "Profile"
@@ -915,15 +910,15 @@ msgid "_Go to playing song"
 msgstr "_Geih to de Leed dat de speelst"
 
 #. Create the widgets
-#: ../src/widgets/ario-playlist.c:1326
+#: ../src/widgets/ario-playlist.c:1323
 msgid "Save playlist"
 msgstr "Speeker Speellist"
 
-#: ../src/widgets/ario-playlist.c:1336
+#: ../src/widgets/ario-playlist.c:1333
 msgid "Playlist name :"
 msgstr "Speellistname :"
 
-#: ../src/widgets/ario-playlist.c:1361
+#: ../src/widgets/ario-playlist.c:1358
 msgid "Playlist already exists. Do you want to ovewrite it?"
 msgstr "Speellist gibbes bereeds. Willste dat üverschreeven?"
 

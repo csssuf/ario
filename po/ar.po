@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-19 21:03+0100\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
 "PO-Revision-Date: 2008-12-18 00:01+0000\n"
 "Last-Translator: AtomCell <shelhatem@gmail.com>\n"
 "Language-Team: Arabic <ar@li.org>\n"
@@ -748,7 +748,7 @@ msgstr ""
 
 #: ../src/shell/ario-shell-lyrics.c:43
 #: ../src/shell/ario-shell-preferences.c:129
-#: ../src/shell/ario-shell-songinfos.c:249
+#: ../src/shell/ario-shell-songinfos.c:209
 msgid "Lyrics"
 msgstr "الكلمات"
 
@@ -782,16 +782,11 @@ msgstr "صورة"
 msgid "Songs"
 msgstr "أغاني"
 
-#: ../src/shell/ario-shell-songinfos.c:227
-#: ../src/shell/ario-shell-songinfos.c:244
-#: ../src/shell/ario-shell-songinfos.c:475
+#: ../src/shell/ario-shell-songinfos.c:115
+#: ../src/shell/ario-shell-songinfos.c:204
+#: ../src/shell/ario-shell-songinfos.c:313
 msgid "Song Properties"
 msgstr ""
-
-#: ../src/shell/ario-shell-songinfos.c:410
-#, fuzzy
-msgid "Error saving tags of file:"
-msgstr "خطأ أثناء قراءة الملفّ"
 
 #: ../src/widgets/ario-connection-widget.c:345
 msgid "Profile"
@@ -914,15 +909,15 @@ msgid "_Go to playing song"
 msgstr ""
 
 #. Create the widgets
-#: ../src/widgets/ario-playlist.c:1326
+#: ../src/widgets/ario-playlist.c:1323
 msgid "Save playlist"
 msgstr ""
 
-#: ../src/widgets/ario-playlist.c:1336
+#: ../src/widgets/ario-playlist.c:1333
 msgid "Playlist name :"
 msgstr ""
 
-#: ../src/widgets/ario-playlist.c:1361
+#: ../src/widgets/ario-playlist.c:1358
 msgid "Playlist already exists. Do you want to ovewrite it?"
 msgstr ""
 

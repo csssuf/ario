@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ario\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-13 13:12+0100\n"
-"PO-Revision-Date: 2008-11-01 20:51+0000\n"
-"Last-Translator: Marc Pavot <marc.pavot@gmail.com>\n"
+"POT-Creation-Date: 2009-01-19 21:02+0100\n"
+"PO-Revision-Date: 2009-01-16 00:50+0000\n"
+"Last-Translator: Jesse Bye <jesse.bye@gmail.com>\n"
 "Language-Team: English (United Kingdom) <en_GB@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2008-12-13 12:02+0000\n"
+"X-Launchpad-Export-Date: 2009-01-19 19:44+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
 
 #: ../data/ario.desktop.in.in.h:1
@@ -56,7 +56,7 @@ msgstr "Music directory :"
 
 #: ../data/glade/connection-widget.glade.h:5
 msgid "Music server is on the same computer as Ario"
-msgstr ""
+msgstr "Music server is on the same computer as Ario"
 
 #: ../data/glade/connection-widget.glade.h:6
 #: ../plugins/radios/ario-radio.c:840 ../plugins/radios/ario-radio.c:1039
@@ -75,11 +75,11 @@ msgstr "Port :"
 
 #: ../data/glade/connection-widget.glade.h:9
 msgid "Server type : "
-msgstr ""
+msgstr "Server type: "
 
 #: ../data/glade/connection-widget.glade.h:10
 msgid "XMMS 2 (Experimental)"
-msgstr ""
+msgstr "XMMS 2 (Experimental)"
 
 #: ../data/glade/cover-prefs.glade.h:1
 msgid "Automatically download the album cover of the playing song"
@@ -126,6 +126,9 @@ msgid ""
 "thanks to the autodetection, you should check that zeroconf/avahi is "
 "activated in your server or use the manual configuration."
 msgstr ""
+"You need to specify a server to connect to. If you don't see your server "
+"thanks to the autodetection, you should check that zeroconf/avahi is "
+"activated in your server or use the manual configuration."
 
 #: ../data/glade/cover-progress.glade.h:1 ../data/glade/cover-select.glade.h:1
 #: ../data/glade/song-infos.glade.h:1
@@ -147,7 +150,7 @@ msgstr "Downloading cover"
 msgid "Local search"
 msgstr "Local search"
 
-#: ../data/glade/cover-select.glade.h:4 ../src/sources/ario-search.c:115
+#: ../data/glade/cover-select.glade.h:4 ../src/sources/ario-search.c:113
 msgid "Search"
 msgstr "Search"
 
@@ -504,7 +507,7 @@ msgstr "Play/Pause"
 
 #. TRAY_ICON_PLAY_PAUSE
 #: ../src/preferences/ario-trayicon-preferences.c:49
-#: ../src/widgets/ario-header.c:246
+#: ../src/widgets/ario-header.c:240
 msgid "Play next song"
 msgstr "Play next song"
 
@@ -515,11 +518,11 @@ msgstr "Do nothing"
 
 #: ../src/servers/ario-mpd.c:388
 msgid "Connecting to server..."
-msgstr ""
+msgstr "Connecting to server..."
 
 #: ../src/servers/ario-mpd.c:413
 msgid "Impossible to connect to server. Check the connection options."
-msgstr ""
+msgstr "Impossible to connect to server. Check the connection options."
 
 #. MPD_TAG_ITEM_DATE
 #: ../src/servers/ario-server.c:50
@@ -545,11 +548,11 @@ msgstr "Any"
 
 #. impossible time or broken locale settings
 #: ../src/servers/ario-server.h:29
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1200
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1199
 msgid "Unknown"
 msgstr "Unknown"
 
-#: ../src/sources/ario-browser.c:79 ../src/sources/ario-search.c:78
+#: ../src/sources/ario-browser.c:79 ../src/sources/ario-search.c:76
 #: ../src/sources/ario-storedplaylists.c:101
 #: ../src/sources/ario-storedplaylists.c:118
 #: ../plugins/filesystem/ario-filesystem.c:104
@@ -558,7 +561,7 @@ msgstr "Unknown"
 msgid "_Add to playlist"
 msgstr "_Add to playlist"
 
-#: ../src/sources/ario-browser.c:82 ../src/sources/ario-search.c:81
+#: ../src/sources/ario-browser.c:82 ../src/sources/ario-search.c:79
 #: ../src/sources/ario-storedplaylists.c:104
 #: ../src/sources/ario-storedplaylists.c:121
 #: ../plugins/filesystem/ario-filesystem.c:107
@@ -567,7 +570,7 @@ msgstr "_Add to playlist"
 msgid "Add and _play"
 msgstr "Add and _play"
 
-#: ../src/sources/ario-browser.c:85 ../src/sources/ario-search.c:84
+#: ../src/sources/ario-browser.c:85 ../src/sources/ario-search.c:82
 #: ../src/sources/ario-storedplaylists.c:107
 #: ../src/sources/ario-storedplaylists.c:124
 #: ../plugins/filesystem/ario-filesystem.c:110
@@ -585,7 +588,7 @@ msgid "_Delete the covers"
 msgstr "_Delete the covers"
 
 #: ../src/sources/ario-browser.c:94 ../src/sources/ario-browser.c:97
-#: ../src/sources/ario-search.c:87 ../src/sources/ario-storedplaylists.c:127
+#: ../src/sources/ario-search.c:85 ../src/sources/ario-storedplaylists.c:127
 #: ../src/widgets/ario-playlist.c:139
 #: ../plugins/filesystem/ario-filesystem.c:127
 #: ../plugins/radios/ario-radio.c:129
@@ -596,15 +599,15 @@ msgstr "_Properties"
 msgid "Library"
 msgstr "Library"
 
-#: ../src/sources/ario-search.c:183
+#: ../src/sources/ario-search.c:178
 msgid "Add a search criteria"
 msgstr "Add a search criteria"
 
-#: ../src/sources/ario-search.c:192
+#: ../src/sources/ario-search.c:186
 msgid "Search songs in the library"
 msgstr "Search songs in the library"
 
-#: ../src/sources/ario-search.c:369
+#: ../src/sources/ario-search.c:362
 msgid "Remove a search criteria"
 msgstr "Remove a search criteria"
 
@@ -736,6 +739,17 @@ msgstr ""
 "  Furkan KARA https://launchpad.net/~frkn\n"
 "  Gabriel Ruiz https://launchpad.net/~anakron\n"
 "  James Nealon https://launchpad.net/~kaobear\n"
+"  Marc Pavot https://launchpad.net/~marc-pavot\n"
+"  Oliver Laub https://launchpad.net/~oliver-laub\n"
+"  bastianneumann https://launchpad.net/~bastianneu\n"
+"\n"
+"Launchpad Contributions:\n"
+"  Andrew Barber https://launchpad.net/~andrew-alex-barber\n"
+"  Christian Siegert https://launchpad.net/~christian-siegert\n"
+"  Furkan KARA https://launchpad.net/~frkn\n"
+"  Gabriel Ruiz https://launchpad.net/~anakron\n"
+"  James Nealon https://launchpad.net/~kaobear\n"
+"  Jesse Bye https://launchpad.net/~jesse-bye\n"
 "  Marc Pavot https://launchpad.net/~marc-pavot\n"
 "  Oliver Laub https://launchpad.net/~oliver-laub\n"
 "  bastianneumann https://launchpad.net/~bastianneu"
@@ -876,38 +890,38 @@ msgstr "Configuration"
 msgid "Confirmation"
 msgstr "Confirmation"
 
-#: ../src/widgets/ario-header.c:64 ../src/widgets/ario-tray-icon.h:45
+#: ../src/widgets/ario-header.c:66 ../src/widgets/ario-tray-icon.h:46
 #, c-format
 msgid "<i>from</i> %s <i>by</i> %s"
 msgstr "<i>from</i> %s <i>by</i> %s"
 
-#: ../src/widgets/ario-header.c:198
+#: ../src/widgets/ario-header.c:195
 msgid "Play previous song"
 msgstr "Play previous song"
 
-#: ../src/widgets/ario-header.c:220
+#: ../src/widgets/ario-header.c:216
 msgid "Play/Pause the music"
 msgstr "Play/Pause the music"
 
-#: ../src/widgets/ario-header.c:233
+#: ../src/widgets/ario-header.c:228
 msgid "Stop the music"
 msgstr "Stop the music"
 
 #. Translators - This " of " is used to count the elapsed time
 #. of a song like in "00:59 of 03:24"
-#: ../src/widgets/ario-header.c:309 ../src/widgets/ario-tray-icon.c:798
+#: ../src/widgets/ario-header.c:307 ../src/widgets/ario-tray-icon.c:798
 msgid " of "
 msgstr " of "
 
-#: ../src/widgets/ario-header.c:323
+#: ../src/widgets/ario-header.c:320
 msgid "Toggle random on/off"
 msgstr "Toggle random on/off"
 
-#: ../src/widgets/ario-header.c:336
+#: ../src/widgets/ario-header.c:332
 msgid "Toggle repeat on/off"
 msgstr "Toggle repeat on/off"
 
-#: ../src/widgets/ario-header.c:342
+#: ../src/widgets/ario-header.c:337
 msgid "Change the music volume"
 msgstr "Change the music volume"
 
@@ -925,11 +939,11 @@ msgstr "_Clear"
 
 #: ../src/widgets/ario-playlist.c:127
 msgid "_Shuffle"
-msgstr ""
+msgstr "_Shuffle"
 
 #: ../src/widgets/ario-playlist.c:130
 msgid "Cr_op"
-msgstr ""
+msgstr "Cr_op"
 
 #: ../src/widgets/ario-playlist.c:133
 msgid "_Remove"
@@ -976,89 +990,89 @@ msgstr "_Next"
 msgid "P_revious"
 msgstr "P_revious"
 
-#: ../src/widgets/ario-tray-icon.h:44
+#: ../src/widgets/ario-tray-icon.h:45
 msgid "Not playing"
 msgstr "Not playing"
 
 #. Translators: "friendly time" string for the current day, strftime format. like "Today 12:34 am"
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1144
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1143
 msgid "Today %I:%M %p"
 msgstr "Today %I:%M %p"
 
 #. Translators: "friendly time" string for the previous day,
 #. * strftime format. e.g. "Yesterday 12:34 am"
 #.
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1157
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1156
 msgid "Yesterday %I:%M %p"
 msgstr "Yesterday %I:%M %p"
 
 #. Translators: "friendly time" string for a day in the current week,
 #. * strftime format. e.g. "Wed 12:34 am"
 #.
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1173
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1172
 msgid "%a %I:%M %p"
 msgstr "%a %I:%M %p"
 
 #. Translators: "friendly time" string for a day in the current year,
 #. * strftime format. e.g. "Feb 12 12:34 am"
 #.
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1185
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1184
 msgid "%b %d %I:%M %p"
 msgstr "%b %d %I:%M %p"
 
 #. Translators: "friendly time" string for a day in a different year,
 #. * strftime format. e.g. "Feb 12 1997"
 #.
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1190
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1189
 msgid "%b %d %Y"
 msgstr "%b %d %Y"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1274
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1273
 #: ../plugins/audioscrobbler/audioscrobbler-prefs.glade.h:6
 msgid "Never"
 msgstr "Never"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1297
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1296
 msgid "OK"
 msgstr "OK"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1300
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1299
 msgid "Logging in"
 msgstr "Logging in"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1303
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1302
 msgid "Request failed"
 msgstr "Request failed"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1306
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1305
 msgid "Incorrect username"
 msgstr "Incorrect username"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1309
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1308
 msgid "Incorrect password"
 msgstr "Incorrect password"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1312
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1311
 msgid "Handshake failed"
 msgstr "Handshake failed"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1315
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1314
 msgid "Client update required"
 msgstr "Client update required"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1318
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1317
 msgid "Track submission failed"
 msgstr "Track submission failed"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1321
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1320
 msgid "Queue is too long"
 msgstr "Queue is too long"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1324
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1323
 msgid "Track submission failed too many times"
 msgstr "Track submission failed too many times"
 
-#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1376
+#: ../plugins/audioscrobbler/ario-audioscrobbler.c:1375
 msgid "Audioscrobbler preferences"
 msgstr "Audioscrobbler preferences"
 

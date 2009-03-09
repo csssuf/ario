@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ario-profiles>
+  <profile host="localhost" port="6600" current="true">Default</profile>
+</ario-profiles>

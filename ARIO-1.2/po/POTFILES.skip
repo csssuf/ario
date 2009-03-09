@@ -1,0 +1,7 @@
+data/ario.desktop.in
+plugins/sample/ario-sample-plugin.c
+plugins/sample/ario-sample-plugin.h
+plugins/sample/sample.ario-plugin.desktop.in
+plugins/sample-python/sample-python.ario-plugin.desktop.in
+
+

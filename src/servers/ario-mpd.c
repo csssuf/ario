@@ -52,7 +52,7 @@ static GSList * ario_mpd_get_songs (const ArioServerCriteria *criteria,
                                     const gboolean exact);
 static GSList * ario_mpd_get_songs_from_playlist (char *playlist);
 static GSList * ario_mpd_get_playlists (void);
-static GSList * ario_mpd_get_playlist_changes (int playlist_id);
+static GSList * ario_mpd_get_playlist_changes (gint64 playlist_id);
 static gboolean ario_mpd_update_status (void);
 static ArioServerSong * ario_mpd_get_current_song_on_server (void);
 static int ario_mpd_get_current_playlist_total_time (void);
@@ -746,7 +746,7 @@ ario_mpd_get_playlists (void)
 }
 
 static GSList *
-ario_mpd_get_playlist_changes (int playlist_id)
+ario_mpd_get_playlist_changes (gint64 playlist_id)
 {
         ARIO_LOG_FUNCTION_START
         GSList *songs = NULL;
@@ -756,7 +756,7 @@ ario_mpd_get_playlist_changes (int playlist_id)
         if (!instance->priv->connection)
                 return NULL;
 
-        mpd_sendPlChangesCommand (instance->priv->connection, playlist_id);
+        mpd_sendPlChangesCommand (instance->priv->connection, (long long) playlist_id);
 
         while ((entity = mpd_getNextInfoEntity (instance->priv->connection))) {
                 if (entity->info.song) {
@@ -796,7 +796,7 @@ ario_mpd_update_status (void)
 
                 if (instance->priv->status) {
                         if (instance->parent.song_id != instance->priv->status->songid
-                            || instance->parent.playlist_id != (int) instance->priv->status->playlist)
+                            || instance->parent.playlist_id != (gint64) instance->priv->status->playlist)
                                 g_object_set (G_OBJECT (instance), "song_id", instance->priv->status->songid, NULL);
 
                         if (instance->parent.state != instance->priv->status->state)
@@ -810,8 +810,8 @@ ario_mpd_update_status (void)
                                 instance->priv->elapsed = instance->priv->status->elapsedTime;
                         }
 
-                        if (instance->parent.playlist_id != (int) instance->priv->status->playlist) {
-                                g_object_set (G_OBJECT (instance), "playlist_id", instance->priv->status->playlist, NULL);
+                        if (instance->parent.playlist_id != (gint64) instance->priv->status->playlist) {
+                                g_object_set (G_OBJECT (instance), "playlist_id", (gint64) instance->priv->status->playlist, NULL);
                                 instance->parent.playlist_length = instance->priv->status->playlistLength;
                         }
 

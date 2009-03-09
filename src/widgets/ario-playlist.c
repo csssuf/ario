@@ -105,7 +105,7 @@ struct ArioPlaylistPrivate
         GtkListStore *model;
         GtkTreeSelection *selection;
 
-        int playlist_id;
+        gint64 playlist_id;
         int playlist_length;
         gboolean ignore;
 

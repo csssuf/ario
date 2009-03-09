@@ -25,7 +25,7 @@
 #include <libxml/parser.h>
 #include <time.h>
 #include <glib/gi18n.h>
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "widgets/ario-playlist.h"
 #include "ario-debug.h"
 #include "ario-util.h"
@@ -59,6 +59,13 @@ struct ArioShellSimilarartistsPrivate
         const gchar* artist;
 };
 
+typedef struct
+{
+        guchar *name;
+        guchar *image;
+        guchar *url;
+} ArioSimilarArtist;
+
 enum
 {
         IMAGE_COLUMN,
@@ -75,14 +82,14 @@ G_DEFINE_TYPE (ArioShellSimilarartists, ario_shell_similarartists, GTK_TYPE_WIND
 static void
 ario_shell_similarartists_class_init (ArioShellSimilarartistsClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioShellSimilarartistsPrivate));
 }
 
 static void
 ario_shell_similarartists_init (ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         shell_similarartists->priv = ARIO_SHELL_SIMILARARTISTS_GET_PRIVATE (shell_similarartists);
 
         g_signal_connect (shell_similarartists,
@@ -100,7 +107,7 @@ static GSList *
 ario_shell_similarartists_parse_xml_file (char *xmldata,
                                           int size)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         xmlDocPtr doc;
         xmlNodePtr cur;
         xmlNodePtr cur2;
@@ -151,8 +158,7 @@ ario_shell_similarartists_parse_xml_file (char *xmldata,
 
         return similar_artists;
 }
-
-void
+static void
 ario_shell_similarartists_free_similarartist (ArioSimilarArtist *similar_artist)
 {
         if (similar_artist) {
@@ -178,7 +184,7 @@ ario_shell_similarartists_get_images_foreach (GtkTreeModel *model,
                                               GtkTreeIter *iter,
                                               ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         int size;
         char *data;
         GdkPixbufLoader *loader;
@@ -241,7 +247,7 @@ ario_shell_similarartists_get_images_foreach (GtkTreeModel *model,
 static gpointer
 ario_shell_similarartists_get_images (ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         gtk_tree_model_foreach (GTK_TREE_MODEL (shell_similarartists->priv->liststore),
                                 (GtkTreeModelForeachFunc) ario_shell_similarartists_get_images_foreach,
@@ -250,10 +256,10 @@ ario_shell_similarartists_get_images (ArioShellSimilarartists *shell_similararti
         return NULL;
 }
 
-GSList *
+static GSList *
 ario_shell_similarartists_get_similar_artists (const gchar *artist)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         char *keyword;
         char *xml_uri;
         int xml_size;
@@ -283,7 +289,7 @@ ario_shell_similarartists_get_similar_artists (const gchar *artist)
 static void
 ario_shell_similarartists_get_artists (ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *similar_artists, *tmp;
         ArioSimilarArtist *similar_artist;
         GtkTreeIter iter;
@@ -335,9 +341,9 @@ ario_shell_similarartists_get_artists (ArioShellSimilarartists *shell_similarart
 GtkWidget *
 ario_shell_similarartists_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioShellSimilarartists *shell_similarartists;
-        GtkBuilder *builder;
+        GladeXML *xml;
         GtkWidget *treeview;
         GtkTreeViewColumn *column;
         GtkCellRenderer *renderer;
@@ -353,9 +359,10 @@ ario_shell_similarartists_new (void)
         g_return_val_if_fail (shell_similarartists->priv != NULL, NULL);
         shell_similarartists->priv->closed = FALSE;
 
-        builder = gtk_builder_helpers_new (UI_PATH "similar-artists.ui",
-                                           shell_similarartists);
-        treeview = GTK_WIDGET (gtk_builder_get_object (builder, "treeview"));
+        xml = rb_glade_xml_new (GLADE_PATH "similar-artists.glade",
+                                "vbox",
+                                shell_similarartists);
+        treeview = glade_xml_get_widget (xml, "treeview");
 
         shell_similarartists->priv->liststore = gtk_list_store_new (N_COLUMN,
                                                                     GDK_TYPE_PIXBUF,
@@ -399,7 +406,7 @@ ario_shell_similarartists_new (void)
         gtk_window_set_default_size (GTK_WINDOW (shell_similarartists), 350, 500);
         gtk_window_set_position (GTK_WINDOW (shell_similarartists), GTK_WIN_POS_CENTER);
 
-        gtk_container_add (GTK_CONTAINER (shell_similarartists), GTK_WIDGET (gtk_builder_get_object (builder, "vbox")));
+        gtk_container_add (GTK_CONTAINER (shell_similarartists), glade_xml_get_widget (xml, "vbox"));
 
         gtk_widget_show_all (GTK_WIDGET (shell_similarartists));
 
@@ -408,7 +415,7 @@ ario_shell_similarartists_new (void)
 
         shell_similarartists->priv->artist = artist;
         ario_shell_similarartists_get_artists (shell_similarartists);
-        g_object_unref (builder);
+        g_object_unref (G_OBJECT (xml));
 
         return GTK_WIDGET (shell_similarartists);
 }
@@ -418,7 +425,7 @@ ario_shell_similarartists_window_delete_cb (GtkWidget *window,
                                             GdkEventAny *event,
                                             ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         shell_similarartists->priv->closed = TRUE;
 
         g_thread_join (shell_similarartists->priv->thread);
@@ -433,7 +440,7 @@ void
 ario_shell_similarartists_close_cb (GtkButton *button,
                                     ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         shell_similarartists->priv->closed = TRUE;
 
         g_thread_join (shell_similarartists->priv->thread);
@@ -446,7 +453,7 @@ void
 ario_shell_similarartists_lastfm_cb (GtkButton *button,
                                      ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeModel *treemodel;
         GtkTreeIter iter;
         gchar *url;
@@ -465,7 +472,7 @@ void
 ario_shell_similarartists_add_cb (GtkButton *button,
                                   ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeModel *treemodel;
         GtkTreeIter iter;
         GSList *artists = NULL;
@@ -479,7 +486,7 @@ ario_shell_similarartists_add_cb (GtkButton *button,
 
                 artists = g_slist_append (artists, artist);
 
-                ario_server_playlist_append_artists (artists, FALSE, -1);
+                ario_playlist_append_artists (artists, FALSE);
 
                 g_slist_foreach (artists, (GFunc) g_free, NULL);
                 g_slist_free (artists);
@@ -492,7 +499,7 @@ ario_shell_similarartists_addall_foreach (GtkTreeModel *model,
                                           GtkTreeIter *iter,
                                           GSList **artists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *artist;
 
         gtk_tree_model_get (model,
@@ -509,24 +516,23 @@ void
 ario_shell_similarartists_addall_cb (GtkButton *button,
                                      ArioShellSimilarartists *shell_similarartists)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *artists = NULL;
 
         gtk_tree_model_foreach (GTK_TREE_MODEL (shell_similarartists->priv->liststore),
                                 (GtkTreeModelForeachFunc) ario_shell_similarartists_addall_foreach,
                                 &artists);
 
-        ario_server_playlist_append_artists (artists, FALSE, -1);
+        ario_playlist_append_artists (artists, FALSE);
 
         g_slist_foreach (artists, (GFunc) g_free, NULL);
         g_slist_free (artists);
 }
 
 void
-ario_shell_similarartists_add_similar_to_playlist (const gchar *artist,
-                                                   const int nb_entries)
+ario_shell_similarartists_add_similar_to_playlist (const gchar *artist)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSimilarArtist *similar_artist;
         GSList *artists = NULL, *similar_artists, *tmp;
 
@@ -537,7 +543,7 @@ ario_shell_similarartists_add_similar_to_playlist (const gchar *artist,
                 artists = g_slist_append (artists, similar_artist->name);
         }
 
-        ario_server_playlist_append_artists (artists, FALSE, nb_entries);
+        ario_playlist_append_artists (artists, FALSE);
 
         g_slist_foreach (similar_artists, (GFunc) ario_shell_similarartists_free_similarartist, NULL);
         g_slist_free (similar_artists);

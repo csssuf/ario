@@ -24,7 +24,9 @@
 #include <stdint.h>
 #include <glib/gi18n.h>
 #include "ario-debug.h"
-#include "ario-util.h"
+
+#define NORMAL_TIMEOUT 500
+#define LAZY_TIMEOUT 12000
 
 static void ario_server_interface_finalize (GObject *object);
 static void ario_server_interface_set_property (GObject *object,
@@ -131,7 +133,7 @@ dummy_pointer_int (gint64 playlist_id)
 static void
 ario_server_interface_class_init (ArioServerInterfaceClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
         object_class->finalize = ario_server_interface_finalize;
@@ -244,7 +246,7 @@ ario_server_interface_class_init (ArioServerInterfaceClass *klass)
 static void
 ario_server_interface_init (ArioServerInterface *server_interface)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         server_interface->song_id = -1;
         server_interface->playlist_id = -1;
         server_interface->volume = -1;
@@ -253,7 +255,7 @@ ario_server_interface_init (ArioServerInterface *server_interface)
 static void
 ario_server_interface_finalize (GObject *object)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerInterface *server_interface;
 
         g_return_if_fail (object != NULL);
@@ -273,7 +275,7 @@ ario_server_interface_set_property (GObject *object,
                                     const GValue *value,
                                     GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerInterface *server_interface = ARIO_SERVER_INTERFACE (object);
         int song_id;
         gboolean song_changed = FALSE;
@@ -298,11 +300,19 @@ ario_server_interface_set_property (GObject *object,
                         new_song = ario_server_get_current_song_on_server ();
                         state_changed = (!old_song || !new_song);
                         if (!state_changed) {
-                                artist_changed = ario_util_strcmp (old_song->artist, new_song->artist) != 0;
-                                if (!artist_changed)
-                                        album_changed = ario_util_strcmp (old_song->album, new_song->album) != 0;
-                                if (!song_changed)
-                                        song_changed = ario_util_strcmp (old_song->name, new_song->name) != 0;
+                                artist_changed = ( (old_song->artist && !new_song->artist)
+                                                   || (!old_song->artist && new_song->artist)
+                                                   || (old_song->artist && new_song->artist && g_utf8_collate (old_song->artist, new_song->artist)) );
+                                if (!artist_changed) {
+                                        album_changed = ( (old_song->album && !new_song->album)
+                                                          || (!old_song->album && new_song->album)
+                                                          || (old_song->album && new_song->album && g_utf8_collate (old_song->album, new_song->album)) );
+                                }
+                                if (!song_changed) {
+                                        song_changed = ( (old_song->name && !new_song->name)
+                                                          || (!old_song->name && new_song->name)
+                                                          || (old_song->name && new_song->name && g_utf8_collate (old_song->name, new_song->name)) );
+                                }
                         }
 
                         if (state_changed || artist_changed || album_changed)
@@ -368,7 +378,7 @@ ario_server_interface_get_property (GObject *object,
                           GValue *value,
                           GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerInterface *server_interface = ARIO_SERVER_INTERFACE (object);
 
         switch (prop_id) {
@@ -405,7 +415,7 @@ ario_server_interface_get_property (GObject *object,
 void
 ario_server_interface_set_default (ArioServerInterface *server_interface)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (server_interface->song_id != 0)
                 g_object_set (G_OBJECT (server_interface), "song_id", 0, NULL);
 
@@ -434,7 +444,7 @@ void
 ario_server_interface_emit (ArioServerInterface *server_interface,
                             ArioServer *server)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (server_interface->signals_to_emit & SERVER_SONG_CHANGED_FLAG)
                 g_signal_emit_by_name (G_OBJECT (server), "song_changed");
         if (server_interface->signals_to_emit & SERVER_ALBUM_CHANGED_FLAG)

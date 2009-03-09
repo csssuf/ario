@@ -23,7 +23,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <glib/gi18n.h>
-#include "lib/gtk-builder-helpers.h"
+#include <glade/glade.h>
+#include "lib/rb-glade-helpers.h"
 #include "lib/ario-conf.h"
 #include "preferences/ario-preferences.h"
 #include "ario-profiles.h"
@@ -41,7 +42,7 @@ G_DEFINE_TYPE (ArioFirstlaunch, ario_firstlaunch, GTK_TYPE_ASSISTANT)
 static void
 ario_firstlaunch_class_init (ArioFirstlaunchClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioFirstlaunchPrivate));
 }
 
@@ -49,7 +50,7 @@ static void
 ario_firstlaunch_cancel_cb (GtkWidget *widget,
                             ArioFirstlaunch *firstlaunch)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gtk_main_quit ();
 }
 
@@ -57,7 +58,7 @@ static void
 ario_firstlaunch_apply_cb (GtkWidget *widget,
                            ArioFirstlaunch *firstlaunch)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_conf_set_boolean (PREF_FIRST_TIME, TRUE);
         gtk_widget_destroy (GTK_WIDGET (firstlaunch));
 }
@@ -67,7 +68,7 @@ ario_firstlaunch_page_prepare_cb (GtkAssistant *assistant,
                                   GtkWidget    *page,
                                   ArioFirstlaunch *firstlaunch)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *text;
         ArioProfile *profile;
 
@@ -86,10 +87,10 @@ ario_firstlaunch_page_prepare_cb (GtkAssistant *assistant,
 static void
 ario_firstlaunch_init (ArioFirstlaunch *firstlaunch) 
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GdkPixbuf *pixbuf;
         GtkWidget *label, *vbox, *connection_vbox;
-        GtkBuilder *builder;
+        GladeXML *xml;
 
         firstlaunch->priv = ARIO_FIRSTLAUNCH_GET_PRIVATE (firstlaunch);
         pixbuf = gdk_pixbuf_new_from_file (PIXMAP_PATH "ario.png", NULL);
@@ -109,18 +110,19 @@ ario_firstlaunch_init (ArioFirstlaunch *firstlaunch)
         gtk_assistant_set_page_complete (GTK_ASSISTANT (firstlaunch), vbox, TRUE);
 
         /* Page 2 */
-        builder = gtk_builder_helpers_new (UI_PATH "connection-assistant.ui",
-                                           firstlaunch);
+        xml = rb_glade_xml_new (GLADE_PATH "connection-assistant.glade",
+                                "vbox",
+                                firstlaunch);
 
-        vbox = GTK_WIDGET (gtk_builder_get_object (builder, "vbox"));
-        connection_vbox = GTK_WIDGET (gtk_builder_get_object (builder, "connection_vbox"));
+        vbox = glade_xml_get_widget (xml, "vbox");
+        connection_vbox = glade_xml_get_widget (xml, "connection_vbox");
 
         gtk_box_pack_start (GTK_BOX (connection_vbox),
                             ario_connection_widget_new (),
                             TRUE, TRUE, 0);
 
         gtk_assistant_append_page (GTK_ASSISTANT (firstlaunch), vbox);
-        g_object_unref (builder);
+        g_object_unref (xml);
         gtk_assistant_set_page_title (GTK_ASSISTANT (firstlaunch), vbox, _("Configuration"));
         gtk_assistant_set_page_type (GTK_ASSISTANT (firstlaunch), vbox, GTK_ASSISTANT_PAGE_CONTENT);
         gtk_assistant_set_page_header_image (GTK_ASSISTANT (firstlaunch), vbox, pixbuf);
@@ -161,7 +163,7 @@ ario_firstlaunch_init (ArioFirstlaunch *firstlaunch)
 ArioFirstlaunch *
 ario_firstlaunch_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioFirstlaunch *firstlaunch;
 
         firstlaunch = g_object_new (TYPE_ARIO_FIRSTLAUNCH, NULL);

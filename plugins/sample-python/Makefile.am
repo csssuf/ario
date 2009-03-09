@@ -1,6 +1,5 @@
 # sample python plugin
 plugindir = $(PLUGINDIR)
-plugindatadir = $(PLUGIN_DATA_DIR)
 plugin_PYTHON = sample-python.py
 
 plugin_in_files = sample-python.ario-plugin.desktop.in

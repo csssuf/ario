@@ -66,6 +66,9 @@
    */
 #define LT_OBJDIR ".libs/"
 
+/* Radio or search or playlists */
+#define MULTIPLE_VIEW 1
+
 /* Name of package */
 #define PACKAGE "ario"
 
@@ -76,23 +79,23 @@
 #define PACKAGE_NAME "Ario"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Ario 1.3"
+#define PACKAGE_STRING "Ario 1.2.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "ario"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.3"
+#define PACKAGE_VERSION "1.2.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.3"
+#define VERSION "1.2.1"
 
+#define GLADE_PATH "data\\glade\\"
 #define DATA_PATH "data\\"
 #define PIXMAP_PATH "data\\"
-#define UI_PATH "data\\ui\\"
+#define UI_PATH "data\\"
 #define LOCALE_DIR "po\\"
 #define ARIO_PLUGIN_DIR "plugins\\"
-#define ARIO_PLUGIN_DATA_DIR "plugins\\"

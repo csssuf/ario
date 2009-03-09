@@ -24,7 +24,7 @@
 #include <string.h>
 #include <time.h>
 #include <glib/gi18n.h>
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "ario-debug.h"
 #include "ario-util.h"
 #include "servers/ario-server.h"
@@ -49,22 +49,22 @@ G_DEFINE_TYPE (ArioStatsPreferences, ario_stats_preferences, GTK_TYPE_VBOX)
 static void
 ario_stats_preferences_class_init (ArioStatsPreferencesClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioStatsPreferencesPrivate));
 }
 
 static void
 ario_stats_preferences_init (ArioStatsPreferences *stats_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         stats_preferences->priv = ARIO_STATS_PREFERENCES_GET_PRIVATE (stats_preferences);
 }
 
 GtkWidget *
 ario_stats_preferences_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
-        GtkBuilder *builder;
+        ARIO_LOG_FUNCTION_START
+        GladeXML *xml;
         ArioStatsPreferences *stats_preferences;
 
         stats_preferences = g_object_new (TYPE_ARIO_STATS_PREFERENCES,
@@ -77,21 +77,22 @@ ario_stats_preferences_new (void)
                                  G_CALLBACK (ario_stats_preferences_stats_changed_cb),
                                  stats_preferences, 0);
 
-        builder = gtk_builder_helpers_new (UI_PATH "stats-prefs.ui",
-                                           stats_preferences);
+        xml = rb_glade_xml_new (GLADE_PATH "stats-prefs.glade",
+                                "vbox",
+                                stats_preferences);
 
         stats_preferences->priv->nbartists_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "nbartists_label"));
+                glade_xml_get_widget (xml, "nbartists_label");
         stats_preferences->priv->nbalbums_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "nbalbums_label"));
+                glade_xml_get_widget (xml, "nbalbums_label");
         stats_preferences->priv->nbsongs_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "nbsongs_label"));
+                glade_xml_get_widget (xml, "nbsongs_label");
         stats_preferences->priv->uptime_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "uptime_label"));
+                glade_xml_get_widget (xml, "uptime_label");
         stats_preferences->priv->playtime_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "playtime_label"));
+                glade_xml_get_widget (xml, "playtime_label");
         stats_preferences->priv->dbplay_time_label = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "dbplay_time_label"));
+                glade_xml_get_widget (xml, "dbplay_time_label");
         gtk_widget_set_size_request(stats_preferences->priv->nbartists_label, 250, -1);
         gtk_widget_set_size_request(stats_preferences->priv->nbalbums_label, 250, -1);
         gtk_widget_set_size_request(stats_preferences->priv->nbsongs_label, 250, -1);
@@ -99,19 +100,19 @@ ario_stats_preferences_new (void)
         gtk_widget_set_size_request(stats_preferences->priv->playtime_label, 250, -1);
         gtk_widget_set_size_request(stats_preferences->priv->dbplay_time_label, 250, -1);
 
-        gtk_builder_helpers_boldify_label (builder, "statistics_frame_label");
-        gtk_builder_helpers_boldify_label (builder, "nbartists_const_label");
-        gtk_builder_helpers_boldify_label (builder, "nbalbums_const_label");
-        gtk_builder_helpers_boldify_label (builder, "nbsongs_const_label");
-        gtk_builder_helpers_boldify_label (builder, "uptime_const_label");
-        gtk_builder_helpers_boldify_label (builder, "playtime_const_label");
-        gtk_builder_helpers_boldify_label (builder, "dbplay_time_const_label");
+        rb_glade_boldify_label (xml, "statistics_frame_label");
+        rb_glade_boldify_label (xml, "nbartists_const_label");
+        rb_glade_boldify_label (xml, "nbalbums_const_label");
+        rb_glade_boldify_label (xml, "nbsongs_const_label");
+        rb_glade_boldify_label (xml, "uptime_const_label");
+        rb_glade_boldify_label (xml, "playtime_const_label");
+        rb_glade_boldify_label (xml, "dbplay_time_const_label");
 
         ario_stats_preferences_sync_stats (stats_preferences);
 
-        gtk_box_pack_start (GTK_BOX (stats_preferences), GTK_WIDGET (gtk_builder_get_object (builder, "vbox")), TRUE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (stats_preferences), glade_xml_get_widget (xml, "vbox"), TRUE, TRUE, 0);
 
-        g_object_unref (builder);
+        g_object_unref (G_OBJECT (xml));
 
         return GTK_WIDGET (stats_preferences);
 }
@@ -119,7 +120,7 @@ ario_stats_preferences_new (void)
 static void
 ario_stats_preferences_sync_stats (ArioStatsPreferences *stats_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerStats *stats = ario_server_get_stats ();
         gchar *tmp;
 
@@ -161,6 +162,6 @@ static void
 ario_stats_preferences_stats_changed_cb (ArioServer *server,
                                          ArioStatsPreferences *stats_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_stats_preferences_sync_stats (stats_preferences);
 }

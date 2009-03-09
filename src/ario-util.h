@@ -23,24 +23,15 @@
 
 #define MAX_COVERS_IN_DRAG 3
 
-#define INTLEN (sizeof(int) * CHAR_BIT + 1) / 3 + 1
-
-#define ARIO_MAX_TIME_SIZE 3*INTLEN+2
-#define ARIO_MAX_TRACK_SIZE INTLEN
-
 struct curl_slist;
 
 char*                   ario_util_format_time                (const int time) G_GNUC_CONST G_GNUC_MALLOC;
 
-void                    ario_util_format_time_buf            (const int time,
-                                                              char *buf,
-                                                              int buf_len);
 char*                   ario_util_format_total_time          (const int time) G_GNUC_CONST G_GNUC_MALLOC;
 
-void                    ario_util_format_track_buf           (const gchar *track,
-                                                              char *buf,
-                                                              int buf_len);
-gchar*                  ario_util_format_title               (ArioServerSong *server_song);
+gchar*                  ario_util_format_track               (const gchar *track) G_GNUC_MALLOC;
+
+gchar*                  ario_util_format_title               (const ArioServerSong *server_song) G_GNUC_MALLOC;
 
 void                    ario_util_add_stock_icons            (const char *stock_id,
                                                               const char *filename);
@@ -79,8 +70,6 @@ GdkPixbuf *             ario_util_get_dnd_pixbuf             (const GSList *crit
 
 gchar *                 ario_util_convert_from_iso8859       (const char *string) G_GNUC_MALLOC;
 
-void                    ario_util_sanitize_filename          (char *filename);
-
 gboolean                ario_file_get_contents               (const gchar *filename,
                                                               gchar **contents,
                                                               gsize *length,
@@ -92,20 +81,13 @@ gboolean                ario_file_set_contents               (const gchar *filen
 gboolean                ario_file_test                       (const gchar *filename,
                                                               GFileTest test);
 
-/* Case insensitive strstr */
-const char *            ario_util_stristr                    (const char *haystack,
-                                                              const char *needle);
-
-GSList *                ario_util_gslist_randomize           (GSList **a,
-                                                              const int max);
-
 /* Inline methods */
 static inline gint
 ario_util_abs (const gint a)
 {
         return (a > 0 ? a : -a);
 }
-
+                
 static inline gint
 ario_util_min (const gint a,
                const gint b)
@@ -120,15 +102,3 @@ ario_util_max (const gint a,
         return (a > b ? a : b);
 }
 
-static inline gint
-ario_util_strcmp (const gchar *a,
-                  const gchar* b)
-{
-        if (!a && !b)
-                return 0;
-        if (!a && b)
-                return 1;
-        if (a && !b)
-                return -1;
-        return g_utf8_collate (a, b);
-}

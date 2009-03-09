@@ -20,14 +20,16 @@
 #include "preferences/ario-lyrics-preferences.h"
 #include <config.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <glib/gi18n.h>
 #include "preferences/ario-preferences.h"
 #include "lyrics/ario-lyrics-manager.h"
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "lib/ario-conf.h"
+#include "ario-avahi.h"
 #include "ario-debug.h"
 
 static void ario_lyrics_preferences_sync_lyrics_providers (ArioLyricsPreferences *lyrics_preferences);
@@ -65,22 +67,22 @@ G_DEFINE_TYPE (ArioLyricsPreferences, ario_lyrics_preferences, GTK_TYPE_VBOX)
 static void
 ario_lyrics_preferences_class_init (ArioLyricsPreferencesClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioLyricsPreferencesPrivate));
 }
 
 static void
 ario_lyrics_preferences_init (ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         lyrics_preferences->priv = ARIO_LYRICS_PREFERENCES_GET_PRIVATE (lyrics_preferences);
 }
 
 GtkWidget *
 ario_lyrics_preferences_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
-        GtkBuilder *builder;
+        ARIO_LOG_FUNCTION_START
+        GladeXML *xml;
         ArioLyricsPreferences *lyrics_preferences;
         GtkCellRenderer *renderer;
         GtkTreeViewColumn *column;
@@ -89,13 +91,14 @@ ario_lyrics_preferences_new (void)
 
         g_return_val_if_fail (lyrics_preferences->priv != NULL, NULL);
 
-        builder = gtk_builder_helpers_new (UI_PATH "lyrics-prefs.ui",
-                                           lyrics_preferences);
+        xml = rb_glade_xml_new (GLADE_PATH "lyrics-prefs.glade",
+                                "lyrics_vbox",
+                                lyrics_preferences);
 
         lyrics_preferences->priv->lyrics_treeview = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "lyrics_treeview"));
+                glade_xml_get_widget (xml, "lyrics_treeview");
 
-        gtk_builder_helpers_boldify_label (builder, "lyrics_sources_frame_label");
+        rb_glade_boldify_label (xml, "lyrics_sources_frame_label");
 
         lyrics_preferences->priv->lyrics_model = gtk_list_store_new (N_COLUMN,
                                                                      G_TYPE_BOOLEAN,
@@ -128,16 +131,16 @@ ario_lyrics_preferences_new (void)
 
         ario_lyrics_preferences_sync_lyrics_providers (lyrics_preferences);
 
-        gtk_box_pack_start (GTK_BOX (lyrics_preferences), GTK_WIDGET (gtk_builder_get_object (builder, "lyrics_vbox")), TRUE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (lyrics_preferences), glade_xml_get_widget (xml, "lyrics_vbox"), TRUE, TRUE, 0);
 
-        g_object_unref (builder);
+        g_object_unref (G_OBJECT (xml));
         return GTK_WIDGET (lyrics_preferences);
 }
 
 static void
 ario_lyrics_preferences_sync_lyrics_providers (ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioLyricsProvider *lyrics_provider;
         GSList *providers;
         GSList *tmp;
@@ -182,7 +185,7 @@ void
 ario_lyrics_preferences_top_button_cb (GtkWidget *widget,
                                        ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter;
         GtkTreeModel *model;
         gchar *id;
@@ -210,7 +213,7 @@ void
 ario_lyrics_preferences_up_button_cb (GtkWidget *widget,
                                       ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter;
         GtkTreeModel *model;
         gchar *id;
@@ -241,7 +244,7 @@ void
 ario_lyrics_preferences_down_button_cb (GtkWidget *widget,
                                         ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter;
         GtkTreeModel *model;
         gchar *id;
@@ -270,7 +273,7 @@ void
 ario_lyrics_preferences_bottom_button_cb (GtkWidget *widget,
                                           ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter;
         GtkTreeModel *model;
         gchar *id;
@@ -299,7 +302,7 @@ ario_lyrics_preferences_lyrics_toggled_cb (GtkCellRendererToggle *cell,
                                            gchar *path_str,
                                            ArioLyricsPreferences *lyrics_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gboolean state;
         gchar *id;
         GtkTreeIter iter;

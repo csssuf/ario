@@ -1,10 +1,12 @@
 /*
- *  Copyright (C) 2009 Marc Pavot <marc.pavot@gmail.com>
+ *  arch-tag: Header for Rhythmbox Glade XML utility functions
+ *
+ *  Copyright (C) 2002 Jorn Baayen
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ *  the Free Software Foundation; either version 2, or (at your option)
+ *  any later version.
  *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,19 +19,20 @@
  *
  */
 
-#include <gtk/gtkbuilder.h>
+#include <glade/glade.h>
 
-#ifndef __GTK_BUILDER_HELPERS_H
-#define __GTK_BUILDER_HELPERS_H
+#ifndef __RB_GLADE_HELPERS_H
+#define __RB_GLADE_HELPERS_H
 
 G_BEGIN_DECLS
 
-GtkBuilder *gtk_builder_helpers_new (const char *file,
-                                     gpointer user_data);
+GladeXML *rb_glade_xml_new (const char *file,
+                            const char *root,
+                            gpointer user_data);
 
-void gtk_builder_helpers_boldify_label (GtkBuilder *builder,
-                                        const char *name);
+void rb_glade_boldify_label (GladeXML *xml,
+			     const char *name);
 
 G_END_DECLS
 
-#endif /* __GTK_BUILDER_HELPERS_H */
+#endif /* __RB_GLADE_HELPERS_H */

@@ -1,5 +1,4 @@
 plugindir = $(PLUGINDIR)
-plugindatadir = $(PLUGIN_DATA_DIR)
 plugin_LTLIBRARIES = libmmkeys.la
 
 libmmkeys_la_SOURCES = \

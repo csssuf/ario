@@ -1,5 +1,4 @@
 plugindir = $(PLUGINDIR)
-plugindatadir = $(PLUGIN_DATA_DIR)
 plugin_LTLIBRARIES = liblibnotify.la
 
 liblibnotify_la_SOURCES = \

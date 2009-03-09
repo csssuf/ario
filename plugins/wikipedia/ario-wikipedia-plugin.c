@@ -37,7 +37,7 @@ static void ario_wikipedia_cmd_find_artist (GtkAction *action,
                                             ArioWikipediaPlugin *plugin);
 static void ario_wikipedia_plugin_sync_server (ArioWikipediaPlugin *plugin);
 static void ario_wikipedia_plugin_server_state_changed_cb (ArioServer *server,
-                                                           ArioWikipediaPlugin *plugin);
+                                                        ArioWikipediaPlugin *plugin);
 #define ARIO_WIKIPEDIA_PLUGIN_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), ARIO_TYPE_WIKIPEDIA_PLUGIN, ArioWikipediaPluginPrivate))
 
 /* Wikipedia language */
@@ -46,7 +46,7 @@ static void ario_wikipedia_plugin_server_state_changed_cb (ArioServer *server,
 
 static GtkActionEntry ario_wikipedia_actions [] =
 {
-        { "ToolWikipedia", "wikipedia.png", N_("Find artist on Wikipedia"), NULL,
+        { "ToolWikipedia", GTK_STOCK_FIND, N_("Find artist on Wikipedia"), NULL,
                 N_("Find artist on Wikipedia"),
                 G_CALLBACK (ario_wikipedia_cmd_find_artist) }
 };
@@ -111,6 +111,7 @@ impl_activate (ArioPlugin *plugin,
                                       G_N_ELEMENTS (ario_wikipedia_actions), pi);
         g_object_unref (pi->priv->actiongroup);
 
+
         g_signal_connect_object (ario_server_get_instance (),
                                  "state_changed",
                                  G_CALLBACK (ario_wikipedia_plugin_server_state_changed_cb),
@@ -167,7 +168,7 @@ impl_create_configure_dialog (ArioPlugin *plugin)
         GtkCellRenderer *renderer;
         GtkTreeIter iter;
         int i;
-        const char *current_language;
+        char *current_language;
 
         dialog = gtk_dialog_new_with_buttons (_("Wikipedia Plugin - Configuration"),
                                               NULL,
@@ -207,6 +208,7 @@ impl_create_configure_dialog (ArioPlugin *plugin)
                 }
                 gtk_combo_box_set_active (GTK_COMBO_BOX (combobox), 0);
         }
+        g_free (current_language);
 
         gtk_box_pack_start_defaults (GTK_BOX (hbox),
                                      label);
@@ -250,7 +252,7 @@ ario_wikipedia_cmd_find_artist (GtkAction *action,
 {
         gchar *artist;
         gchar *uri;
-        const gchar *language;
+        gchar *language;
 
         g_return_if_fail (ARIO_IS_WIKIPEDIA_PLUGIN (plugin));
 
@@ -261,6 +263,7 @@ ario_wikipedia_cmd_find_artist (GtkAction *action,
 
                 language = ario_conf_get_string (CONF_WIKIPEDIA_LANGUAGE, CONF_WIKIPEDIA_LANGUAGE_DEFAULT);
                 uri = g_strdup_printf ("http://%s.wikipedia.org/wiki/%s", language, artist);
+                g_free (language);
                 g_free (artist);
                 ario_util_load_uri (uri);
                 g_free (uri);
@@ -270,7 +273,7 @@ ario_wikipedia_cmd_find_artist (GtkAction *action,
 static void
 ario_wikipedia_plugin_sync_server (ArioWikipediaPlugin *plugin)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gboolean is_playing;
         GtkAction *action;
 
@@ -285,9 +288,9 @@ ario_wikipedia_plugin_sync_server (ArioWikipediaPlugin *plugin)
 
 static void
 ario_wikipedia_plugin_server_state_changed_cb (ArioServer *server,
-                                               ArioWikipediaPlugin *plugin)
+                                            ArioWikipediaPlugin *plugin)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         ario_wikipedia_plugin_sync_server (plugin);
 }

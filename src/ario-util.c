@@ -23,7 +23,6 @@
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
 #include <curl/curl.h>
 #include <glib/gi18n.h>
@@ -31,9 +30,10 @@
 #include "ario-debug.h"
 #include "covers/ario-cover.h"
 #include "preferences/ario-preferences.h"
-#include <gcrypt.h>
 #ifdef WIN32
 #include <windows.h>
+#else
+#include <gcrypt.h>
 #endif
 
 #define MAX_COVERS_IN_DRAG 3
@@ -41,7 +41,7 @@
 char *
 ario_util_format_time (const int time)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         int sec, min, hours;
 
         if (time < 0)
@@ -57,33 +57,12 @@ ario_util_format_time (const int time)
                 return g_strdup_printf ("%02i:%02i", min, sec);
 }
 
-void
-ario_util_format_time_buf (const int time,
-                           char *buf,
-                           int buf_len)
-{
-        ARIO_LOG_FUNCTION_START;
-        int sec, min, hours;
-
-        if (time < 0)
-                g_snprintf (buf, buf_len, _("n/a"));
-
-        hours = (int)(time / 3600);
-        min = (int)((time % 3600) / 60) ;
-        sec = (time % 60);
-
-        if (hours > 0)
-                g_snprintf (buf, buf_len, "%d:%02i:%02i", hours, min, sec);
-        else
-                g_snprintf (buf, buf_len, "%02i:%02i", min, sec);
-}
-
 char *
 ario_util_format_total_time (const int time)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *res;
-        gchar *tmp;
+        gchar *temp1, *temp2;
         int temp_time;
         int sec, min, hours, days;
 
@@ -102,80 +81,83 @@ ario_util_format_total_time (const int time)
         res = g_strdup_printf ("%d %s", sec, _("seconds"));
 
         if (min != 0) {
-                tmp = g_strdup_printf ("%d %s, %s", min, _("minutes"), res);
+                temp1 = g_strdup_printf ("%d %s, ", min, _("minutes"));
+                temp2 = g_strconcat (temp1, res, NULL);
+                g_free (temp1);
                 g_free (res);
-                res = tmp;
+                res = temp2;
         }
 
         if (hours != 0) {
-                tmp = g_strdup_printf ("%d %s, %s", hours, _("hours"), res);
+                temp1 = g_strdup_printf ("%d %s, ", hours, _("hours"));
+                temp2 = g_strconcat (temp1, res, NULL);
+                g_free (temp1);
                 g_free (res);
-                res = tmp;
+                res = temp2;
         }
 
         if (days != 0) {
-                tmp = g_strdup_printf ("%d %s, %s", days, _("days"), res);
+                temp1 = g_strdup_printf ("%d %s, ", days, _("days"));
+                temp2 = g_strconcat (temp1, res, NULL);
+                g_free (temp1);
                 g_free (res);
-                res = tmp;
+                res = temp2;
         }
 
         return res;
 }
 
-void
-ario_util_format_track_buf (const gchar *track,
-                            char *buf,
-                            int buf_len)
+gchar *
+ario_util_format_track (const gchar *track)
 {
-        ARIO_LOG_FUNCTION_START;
-        gchar *slash;
-        gchar tmp[INTLEN];
+        ARIO_LOG_FUNCTION_START
+        gchar *slash, *tmp;
+        gchar *res;
 
-        if (!track) {
-                *buf = '\0';
-                return;
-        }
+        if (!track)
+                return NULL;
 
         /* Some tracks are x/y, we only want to display x */
         slash = g_strrstr (track, "/"); 
         if (slash) {
-                g_snprintf (tmp, ario_util_min (INTLEN, slash - track + 1), "%s", track);
-                g_snprintf (buf, buf_len, "%02i", atoi (tmp));
+                tmp = g_strndup (track, slash - track);
+                res = g_strdup_printf ("%02i", atoi (tmp));
+                g_free (tmp);
         } else {
-                g_snprintf (buf, buf_len, "%02i", atoi (track));
+                res = g_strdup_printf ("%02i", atoi (track));
         }
+        return res;
 }
 
 gchar *
-ario_util_format_title (ArioServerSong *server_song)
+ario_util_format_title (const ArioServerSong *server_song)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *dot;
         gchar *slash;
         gchar *res = NULL;
 
         if (!server_song) {
-                res = ARIO_SERVER_UNKNOWN;
+                res = g_strdup (ARIO_SERVER_UNKNOWN);
         } else if (server_song->title) {
-                res = server_song->title;
+                res = g_strdup (server_song->title);
         } else if (server_song->name) {
-                res = server_song->name;
+                res = g_strdup (server_song->name);
         } else {
                 /* Original format is : "path/to/filename.extension" or http://path/to/address:port
                  * We only want to display filename or http address */
                 if (!g_ascii_strncasecmp (server_song->file, "http://", 7)) {
-                        res = server_song->file;
+                        res = g_strdup (server_song->file);
                 } else {
                         slash = g_strrstr (server_song->file, "/"); 
                         if (slash) {
                                 dot = g_strrstr (slash+1, ".");
                                 if (dot)
-                                        server_song->title = g_strndup (slash+1, dot - slash - 1);
+                                        res = g_strndup (slash+1, dot - slash - 1);
                                 else
-                                        server_song->title = g_strdup (slash+1);
-                                res = server_song->title;
+                                        res = g_strdup (slash+1);
                         } else {
-                                res = server_song->file;
+                                res = g_strdup (server_song->file);
                         }
                 }
         }
@@ -188,7 +170,7 @@ void
 ario_util_add_stock_icons (const char *stock_id,
                            const char *filename)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         static int icon_size = 0;
         GdkPixbuf *pb;
@@ -207,7 +189,7 @@ ario_util_add_stock_icons (const char *stock_id,
 void
 ario_util_init_stock_icons (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         factory = gtk_icon_factory_new ();
 
@@ -233,7 +215,7 @@ ario_util_has_stock_icons (const char *stock_id)
 const char *
 ario_util_config_dir (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         static char *config_dir = NULL;
 
         if (!config_dir) {
@@ -259,7 +241,6 @@ ario_util_uri_exists (const char *uri)
 void
 ario_util_unlink_uri (const char *uri)
 {
-        ARIO_LOG_FUNCTION_START;
         gchar *uri_fse = g_filename_from_utf8 (uri, -1, NULL, NULL, NULL);
         if (!uri_fse)
                 return;
@@ -272,7 +253,6 @@ ario_util_unlink_uri (const char *uri)
 void
 ario_util_mkdir (const char *uri)
 {
-        ARIO_LOG_FUNCTION_START;
         gchar *uri_fse = g_filename_from_utf8 (uri, -1, NULL, NULL, NULL);
         if (!uri_fse)
                 return;
@@ -286,7 +266,6 @@ void
 ario_util_copy_file (const char *src_uri,
                      const char *dest_uri)
 {
-        ARIO_LOG_FUNCTION_START;
         gchar *contents;
         gsize length;
 
@@ -317,7 +296,6 @@ ario_util_write_data(void *buffer,
                      size_t nmemb,
                      download_struct *download_data)
 {
-        ARIO_LOG_FUNCTION_START;
         if(!size || !nmemb)
                 return 0;
         if(download_data->data == NULL)
@@ -345,10 +323,10 @@ ario_util_download_file (const char *uri,
                          int* size,
                          char** data)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ARIO_LOG_DBG ("Download:%s", uri);
         download_struct download_data;
-        const gchar* address;
+        gchar* address = NULL;
         int port;
 
         CURL* curl = curl_easy_init ();
@@ -400,6 +378,7 @@ ario_util_download_file (const char *uri,
         *size = download_data.size;
         *data = download_data.data;
 
+        g_free(address);
         curl_easy_cleanup (curl);
 }
 
@@ -408,28 +387,20 @@ ario_util_string_replace (char **string,
                           const char *old,
                           const char *new)
 {
-        ARIO_LOG_FUNCTION_START;
         gchar **strsplit;
         GString *str;
         int i;
 
-        if (!g_strstr_len (*string, -1, old))
-            return;
-
         strsplit = g_strsplit (*string, old, 0);
 
-        if (!strsplit)
-                
-        if (!strsplit[0]) {
-                g_strfreev (strsplit);
+        if (!strsplit || !strsplit[0])
                 return;
-        }
 
         str = g_string_new (strsplit[0]);
 
         for (i = 1; strsplit[i] && g_utf8_collate (strsplit[i], ""); ++i) {
-                g_string_append (str, new);
-                g_string_append (str, strsplit[i]);
+                g_string_append(str, new);
+                g_string_append(str, strsplit[i]);
         }
         g_strfreev (strsplit);
 
@@ -441,7 +412,7 @@ ario_util_string_replace (char **string,
 void
 ario_util_load_uri (const char *uri)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 #ifdef WIN32
         ShellExecute (GetDesktopWindow(), "open", uri, NULL, NULL, SW_SHOW);
 #else
@@ -454,7 +425,7 @@ ario_util_load_uri (const char *uri)
 char *
 ario_util_format_keyword (const char *keyword)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *tmp;
         int i, j;
         int length;
@@ -502,10 +473,11 @@ ario_util_format_keyword (const char *keyword)
         return ret;
 }
 
+#ifndef WIN32
 gchar *
 ario_util_md5 (const char *string)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         guchar md5pword[16];
         gchar md5_response[33];
         int j;
@@ -523,6 +495,7 @@ ario_util_md5 (const char *string)
 
         return (g_strdup (md5_response));
 }
+#endif
 
 #define DRAG_SIZE 70
 #define DRAG_COVER_STEP 0.15
@@ -530,7 +503,7 @@ ario_util_md5 (const char *string)
 static GdkPixbuf *
 ario_util_get_dnd_pixbuf_from_cover_paths (GSList *covers)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *tmp;
         int len = g_slist_length (covers);
         GdkPixbuf *pixbuf, *cover;
@@ -570,7 +543,7 @@ ario_util_get_dnd_pixbuf_from_cover_paths (GSList *covers)
 GdkPixbuf *
 ario_util_get_dnd_pixbuf_from_albums (const GSList *albums)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         const GSList *tmp;
         GSList *covers = NULL;
         gchar *cover_path;
@@ -584,7 +557,7 @@ ario_util_get_dnd_pixbuf_from_albums (const GSList *albums)
         for (tmp = albums; tmp && len < MAX_COVERS_IN_DRAG; tmp = g_slist_next (tmp)) {
                 ario_server_album = tmp->data;
 
-                cover_path = ario_cover_make_cover_path (ario_server_album->artist, ario_server_album->album, SMALL_COVER);
+                cover_path = ario_cover_make_ario_cover_path (ario_server_album->artist, ario_server_album->album, SMALL_COVER);
                 if (ario_util_uri_exists (cover_path)) {
                         covers = g_slist_append (covers, cover_path);
                         ++len;
@@ -604,7 +577,7 @@ ario_util_get_dnd_pixbuf_from_albums (const GSList *albums)
 GdkPixbuf *
 ario_util_get_dnd_pixbuf (const GSList *criterias)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         const GSList *tmp;
         ArioServerAlbum *server_album;
         int len = 0;
@@ -624,7 +597,7 @@ ario_util_get_dnd_pixbuf (const GSList *criterias)
 
                 for (album_tmp = albums; album_tmp && len < MAX_COVERS_IN_DRAG; album_tmp = g_slist_next (album_tmp)) {
                         server_album = album_tmp->data;
-                        cover_path = ario_cover_make_cover_path (server_album->artist, server_album->album, SMALL_COVER);
+                        cover_path = ario_cover_make_ario_cover_path (server_album->artist, server_album->album, SMALL_COVER);
                         if (ario_util_uri_exists (cover_path)) {
                                 covers = g_slist_append (covers, cover_path);
                                 ++len;
@@ -647,7 +620,7 @@ ario_util_get_dnd_pixbuf (const GSList *criterias)
 gchar *
 ario_util_convert_from_iso8859 (const char *string)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         char *ret, *tmp;
 
         tmp = g_convert (string, -1, (const gchar *) "ISO-8859-1", "UTF8", NULL, NULL, NULL);
@@ -657,25 +630,9 @@ ario_util_convert_from_iso8859 (const char *string)
         return ret;
 }
 
-void
-ario_util_sanitize_filename (char *filename)
+gboolean ario_file_get_contents (const gchar *filename, gchar **contents,
+                                 gsize *length, GError **error)
 {
-        ARIO_LOG_FUNCTION_START;
-        const char *to_strip = "#/*\"\\[]:;|=";
-        char *tmp;
-
-        /* We replace some special characters with spaces. */
-        for (tmp = filename; *tmp != '\0'; ++tmp) {
-                if (strchr (to_strip, *tmp))
-                        *tmp = ' ';
-        }
-}
-
-gboolean
-ario_file_get_contents (const gchar *filename, gchar **contents,
-                        gsize *length, GError **error)
-{
-        ARIO_LOG_FUNCTION_START;
         gboolean ret;
         gchar *filename_fse = g_filename_from_utf8 (filename, -1, NULL, NULL, NULL);
 
@@ -692,11 +649,9 @@ ario_file_get_contents (const gchar *filename, gchar **contents,
         return ret;
 }
 
-gboolean
-ario_file_set_contents (const gchar *filename, const gchar *contents,
-                        gsize length, GError **error)
+gboolean ario_file_set_contents (const gchar *filename, const gchar *contents,
+                                 gsize length, GError **error)
 {
-        ARIO_LOG_FUNCTION_START;
         gboolean ret;
         gchar *filename_fse = g_filename_from_utf8 (filename, -1, NULL, NULL, NULL);
 
@@ -713,10 +668,8 @@ ario_file_set_contents (const gchar *filename, const gchar *contents,
         return ret;
 }
 
-gboolean
-ario_file_test (const gchar *filename, GFileTest test)
+gboolean ario_file_test (const gchar *filename, GFileTest test)
 {
-        ARIO_LOG_FUNCTION_START;
         gboolean ret;
         gchar *filename_fse = g_filename_from_utf8 (filename, -1, NULL, NULL, NULL);
         if (!filename_fse)
@@ -725,57 +678,5 @@ ario_file_test (const gchar *filename, GFileTest test)
         ret = g_file_test (filename_fse, test);
 
         g_free (filename_fse);
-        return ret;
-}
-
-const char *
-ario_util_stristr (const char *haystack,
-                   const char *needle)
-{
-        ARIO_LOG_FUNCTION_START;
-        if (!*needle) {
-                return haystack;
-        }
-
-        for (; *haystack; ++haystack) {
-                if (toupper(*haystack) == toupper(*needle)) {
-                        /*
-                         * Matched starting char -- loop through remaining chars.
-                         */
-                        const char *h, *n;
-
-                        for (h = haystack, n = needle; *h && *n; ++h, ++n) {
-                                if (toupper(*h) != toupper(*n)) {
-                                        break;
-                                }
-                        }
-                        /* matched all of 'needle' to null termination */
-                        if (!*n) {
-                                return haystack; /* return the start of the match */
-                        }
-                }
-        }
-        return 0;
-}
-
-GSList *
-ario_util_gslist_randomize (GSList **a,
-                            const int max)
-{
-        ARIO_LOG_FUNCTION_START;
-        GSList *ret = NULL, *tmp;
-        int i = 0;
-        int len = g_slist_length (*a);
-
-        for (i = 0; i < max; ++i) {
-                if (len <= 0)
-                        break;
-
-                tmp = g_slist_nth (*a, rand()%len);
-                *a = g_slist_remove_link (*a, tmp);
-                ret = g_slist_concat (ret, tmp);
-                len--;
-        }
-
         return ret;
 }

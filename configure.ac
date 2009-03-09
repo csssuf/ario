@@ -1,6 +1,6 @@
 AC_PREREQ(2.59)
 
-m4_define(ario_version,1.3svn)
+m4_define(ario_version,1.2.1)
 
 AC_INIT([Ario], [ario_version], [marc.pavot@gmail.com], [ario])
 AM_CONFIG_HEADER(config.h)
@@ -31,9 +31,9 @@ fi
 PKG_CHECK_MODULES(DEPS, [gtk+-2.0 >= 2.12
                          glib-2.0 >= 2.4
                          gobject-2.0 >= 2.4
+                         libglade-2.0
                          gmodule-2.0
                          gthread-2.0
-                         libxml-2.0
                          libcurl
                          gnutls])
 
@@ -135,6 +135,7 @@ AC_ARG_ENABLE(search,
                              [Disable support of search view]))
 if test x"$enable_search" != xno; then
    AC_DEFINE(ENABLE_SEARCH, 1, [Add support of search view])
+   AC_DEFINE(MULTIPLE_VIEW, 1, [Radio or search or playlists])
 fi
 
 dnl ================================================================
@@ -156,6 +157,7 @@ AC_ARG_ENABLE(playlists,
                              [Disable support of playlists]))
 if test x"$enable_playlists" != xno; then
    AC_DEFINE(ENABLE_STOREDPLAYLISTS, 1, [Add support of playlists])
+   AC_DEFINE(MULTIPLE_VIEW, 1, [Radio or search or playlists])
 fi
 
 dnl ================================================================
@@ -233,24 +235,8 @@ if test x"$enable_avahi" != xno; then
 fi
 AM_CONDITIONAL(USE_AVAHI, test x"$enable_avahi" != xno)
 
-dnl ================================================================
-dnl Taglib
-dnl ================================================================
-AC_ARG_ENABLE(taglib,
-              AC_HELP_STRING([--disable-taglib],
-                             [Disable support of Taglib]))
-if test x"$enable_taglib" != xno; then
-   AC_DEFINE(ENABLE_TAGLIB, 1, [Add support of taglib])
-   PKG_CHECK_MODULES(TAGLIB, [taglib_c])
-   AC_SUBST(TAGLIB_CFLAGS)
-   AC_SUBST(TAGLIB_LIBS)
-fi
-
 PLUGINDIR='${libdir}/ario/plugins'
 AC_SUBST(PLUGINDIR)
-
-PLUGIN_DATA_DIR='${pkgdatadir}/plugins'
-AC_SUBST(PLUGIN_DATA_DIR)
 
 AC_OUTPUT([
 Makefile
@@ -321,9 +307,4 @@ if test x${enable_mpdidle} = xyes; then
         echo "MPD 'idle' mode support is:               ENABLED"
 else
         echo "MPD 'idle' mode support is:               DISABLED (--enable-mpdidle)"
-fi
-if test x${enable_taglib} != xno; then
-        echo "Taglib support is:                        ENABLED  (--disable-taglib)"
-else
-        echo "Taglib support is:                        DISABLED"
 fi

@@ -19,9 +19,13 @@
 
 #include "ario-lyrics.h"
 #include <glib.h>
+#include <gtk/gtkdialog.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
 #include <string.h>
 #include <glib/gi18n.h>
 #include "ario-util.h"
+#include "preferences/ario-preferences.h"
 #include "ario-debug.h"
 
 static void ario_lyrics_create_ario_lyrics_dir (void);
@@ -30,13 +34,18 @@ gchar*
 ario_lyrics_make_lyrics_path (const gchar *artist,
                               const gchar *title)
 {
-        ARIO_LOG_FUNCTION_START;
-        char *ario_lyrics_path;
+        ARIO_LOG_FUNCTION_START
+        char *ario_lyrics_path, *tmp;
         char *filename;
+        const char *to_strip = "#/";
 
         filename = g_strdup_printf ("%s-%s.txt", artist, title);
 
-        ario_util_sanitize_filename (filename);
+        /* We replace some special characters with spaces. */
+        for (tmp = filename; *tmp != '\0'; ++tmp) {
+                if (strchr (to_strip, *tmp))
+                        *tmp = ' ';
+        }
 
         /* The returned path is ~/.config/ario/lyrics/filename */
         ario_lyrics_path = g_build_filename (ario_util_config_dir (), "lyrics", filename, NULL);
@@ -48,7 +57,7 @@ ario_lyrics_make_lyrics_path (const gchar *artist,
 static void
 ario_lyrics_create_ario_lyrics_dir (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *ario_lyrics_dir;
 
         ario_lyrics_dir = g_build_filename (ario_util_config_dir (), "lyrics", NULL);
@@ -63,7 +72,7 @@ void
 ario_lyrics_remove_lyrics (const gchar *artist,
                            const gchar *title)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *ario_lyrics_path;
 
         if (!ario_lyrics_lyrics_exists (artist, title))
@@ -80,7 +89,7 @@ ArioLyrics *
 ario_lyrics_get_local_lyrics (const gchar *artist,
                               const gchar *title)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioLyrics *lyrics = NULL;
         gchar *ario_lyrics_path;
         gchar *read_data;
@@ -144,7 +153,7 @@ ario_lyrics_save_lyrics (const gchar *artist,
                          const gchar *title,
                          const gchar *lyrics)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gboolean ret;
         gchar *ario_lyrics_path;
 
@@ -170,7 +179,7 @@ gboolean
 ario_lyrics_lyrics_exists (const gchar *artist,
                            const gchar *title)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *ario_lyrics_path;
         gboolean result;
 

@@ -89,7 +89,6 @@ struct ArioFilesystemPrivate
         GtkWidget *songs;
 
         gboolean connected;
-        gboolean empty;
 
         gboolean dragging;
         gboolean pressed;
@@ -172,18 +171,9 @@ ario_filesystem_get_icon (ArioSource *source)
 }
 
 static void
-ario_filesystem_select (ArioSource *source)
-{
-        ArioFilesystem *filesystem = ARIO_FILESYSTEM (source);
-
-        if (filesystem->priv->empty)
-                ario_filesystem_fill_filesystem (filesystem);
-}
-
-static void
 ario_filesystem_class_init (ArioFilesystemClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         ArioSourceClass *source_class = ARIO_SOURCE_CLASS (klass);
 
@@ -194,7 +184,6 @@ ario_filesystem_class_init (ArioFilesystemClass *klass)
         source_class->get_name = ario_filesystem_get_name;
         source_class->get_icon = ario_filesystem_get_icon;
         source_class->shutdown = ario_filesystem_shutdown;
-        source_class->select = ario_filesystem_select;
 
         g_object_class_install_property (object_class,
                                          PROP_UI_MANAGER,
@@ -210,7 +199,7 @@ ario_filesystem_class_init (ArioFilesystemClass *klass)
 static void
 ario_filesystem_init (ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeViewColumn *column;
         GtkCellRenderer *renderer;
         int pos;
@@ -219,7 +208,6 @@ ario_filesystem_init (ArioFilesystem *filesystem)
         filesystem->priv = ARIO_FILESYSTEM_GET_PRIVATE (filesystem);
 
         filesystem->priv->connected = FALSE;
-        filesystem->priv->empty = TRUE;
 
         /* Filesystem tree */
         scrolledwindow_filesystem = gtk_scrolled_window_new (NULL, NULL);
@@ -327,7 +315,7 @@ ario_filesystem_set_property (GObject *object,
                               const GValue *value,
                               GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioFilesystem *filesystem = ARIO_FILESYSTEM (object);
 
         switch (prop_id) {
@@ -346,7 +334,7 @@ ario_filesystem_get_property (GObject *object,
                               GValue *value,
                               GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioFilesystem *filesystem = ARIO_FILESYSTEM (object);
 
         switch (prop_id) {
@@ -363,7 +351,7 @@ GtkWidget *
 ario_filesystem_new (GtkUIManager *mgr,
                      GtkActionGroup *group)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioFilesystem *filesystem;
         GtkWidget *scrolledwindow_songs;
         ArioServer *server = ario_server_get_instance ();
@@ -406,13 +394,15 @@ ario_filesystem_new (GtkUIManager *mgr,
 
         filesystem->priv->connected = ario_server_is_connected ();
 
+        ario_filesystem_fill_filesystem (filesystem);
+
         return GTK_WIDGET (filesystem);
 }
 
 static void
 ario_filesystem_fill_filesystem (ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter, fake_child;
 
         gtk_tree_store_clear (filesystem->priv->filesystem_model);
@@ -430,14 +420,13 @@ ario_filesystem_fill_filesystem (ArioFilesystem *filesystem)
                 gtk_tree_selection_select_iter (filesystem->priv->filesystem_selection, &iter);
                 ario_filesystem_cursor_moved_cb (GTK_TREE_VIEW (filesystem->priv->filesystem), filesystem);
         }
-        filesystem->priv->empty = FALSE;
 }
 
 static void
 ario_filesystem_state_changed_cb (ArioServer *server,
                                   ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (filesystem->priv->connected != ario_server_is_connected ()) {
                 filesystem->priv->connected = ario_server_is_connected ();
                 ario_filesystem_fill_filesystem (filesystem);
@@ -448,7 +437,7 @@ static void
 ario_filesystem_filesystem_changed_cb (ArioServer *server,
                                        ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_filesystem_fill_filesystem (filesystem);
 }
 
@@ -458,7 +447,7 @@ ario_filesystem_filetree_row_expanded_cb (GtkTreeView *tree_view,
                                           GtkTreePath *path,
                                           ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         ario_filesystem_cursor_moved_cb (tree_view,
                                          filesystem);
@@ -472,7 +461,7 @@ ario_filesystem_filetree_row_activated_cb (GtkTreeView *tree_view,
                                            GtkTreeViewColumn *column,
                                            ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         if (!gtk_tree_view_row_expanded (tree_view, path)) {
                 gtk_tree_view_expand_row (tree_view, path, FALSE);
@@ -485,7 +474,7 @@ static void
 ario_filesystem_cursor_moved_cb (GtkTreeView *tree_view,
                                  ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter, child, fake_child, song_iter;
         GtkTreeModel *model = GTK_TREE_MODEL (filesystem->priv->filesystem_model);
         GtkListStore *liststore = ario_songlist_get_liststore (ARIO_SONGLIST (filesystem->priv->songs));
@@ -543,6 +532,7 @@ ario_filesystem_cursor_moved_cb (GtkTreeView *tree_view,
                                     SONGS_ALBUM_COLUMN, song->album,
                                     SONGS_FILENAME_COLUMN, song->file,
                                     -1);
+                g_free (title);
         }
         ario_server_free_file_list (files);
         g_free (dir);
@@ -560,7 +550,7 @@ static void
 ario_filesystem_add_filetree (ArioFilesystem *filesystem,
                               gboolean play)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *dir;
         GtkTreeIter iter;
         GtkTreeModel *model = GTK_TREE_MODEL (filesystem->priv->filesystem_model);
@@ -575,7 +565,7 @@ ario_filesystem_add_filetree (ArioFilesystem *filesystem,
 
         g_return_if_fail (dir);
 
-        ario_server_playlist_append_dir (dir, play);
+        ario_playlist_append_dir (dir, play);
         g_free (dir);
 }
 
@@ -583,7 +573,7 @@ static void
 ario_filesystem_cmd_add_filesystem (GtkAction *action,
                                     ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_filesystem_add_filetree (filesystem, FALSE);
 }
 
@@ -591,7 +581,7 @@ static void
 ario_filesystem_cmd_add_play_filesystem (GtkAction *action,
                                          ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_filesystem_add_filetree (filesystem, TRUE);
 }
 
@@ -599,7 +589,7 @@ static void
 ario_filesystem_cmd_clear_add_play_filesystem (GtkAction *action,
                                                ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_server_clear ();
         ario_filesystem_add_filetree (filesystem, TRUE);
 }
@@ -607,7 +597,7 @@ ario_filesystem_cmd_clear_add_play_filesystem (GtkAction *action,
 static void
 ario_filesystem_popup_menu (ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *menu;
 
         menu = gtk_ui_manager_get_widget (filesystem->priv->ui_manager, "/FilesystemPopup");
@@ -620,7 +610,7 @@ ario_filesystem_button_press_cb (GtkWidget *widget,
                                  GdkEventButton *event,
                                  ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GdkModifierType mods;
         int x, y;
 
@@ -666,7 +656,7 @@ ario_filesystem_button_release_cb (GtkWidget *widget,
                                    GdkEventButton *event,
                                    ArioFilesystem *filesystem)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (!filesystem->priv->dragging && !(event->state & GDK_CONTROL_MASK) && !(event->state & GDK_SHIFT_MASK)) {
                 GtkTreePath *path;
 
@@ -691,7 +681,7 @@ ario_filesystem_motion_notify (GtkWidget *widget,
                                ArioFilesystem *filesystem)
 {
         // desactivated to make the logs more readable
-        // ARIO_LOG_FUNCTION_START;
+        // ARIO_LOG_FUNCTION_START
         GdkModifierType mods;
         int x, y;
         int dx, dy;
@@ -716,7 +706,7 @@ ario_filesystem_filetree_drag_data_get_cb (GtkWidget * widget,
                                            GtkSelectionData * selection_data,
                                            guint info, guint time, gpointer data)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioFilesystem *filesystem;
         GtkTreeIter iter;
         GtkTreeModel *model;

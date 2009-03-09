@@ -122,7 +122,7 @@ ario_search_get_icon (ArioSource *source)
 static void
 ario_search_class_init (ArioSearchClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         ArioSourceClass *source_class = ARIO_SOURCE_CLASS (klass);
 
@@ -148,7 +148,7 @@ ario_search_class_init (ArioSearchClass *klass)
 static void
 ario_search_init (ArioSearch *search)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *hbox;
         GtkTreeIter iter;
         GtkWidget *image;
@@ -224,7 +224,7 @@ ario_search_init (ArioSearch *search)
 static void
 ario_search_finalize (GObject *object)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearch *search;
 
         g_return_if_fail (object != NULL);
@@ -244,7 +244,7 @@ ario_search_set_property (GObject *object,
                           const GValue *value,
                           GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearch *search = ARIO_SEARCH (object);
 
         switch (prop_id) {
@@ -263,7 +263,7 @@ ario_search_get_property (GObject *object,
                           GValue *value,
                           GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearch *search = ARIO_SEARCH (object);
 
         switch (prop_id) {
@@ -280,7 +280,7 @@ GtkWidget *
 ario_search_new (GtkUIManager *mgr,
                  GtkActionGroup *group)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearch *search;
         GtkWidget *scrolledwindow_searchs;
 
@@ -320,7 +320,7 @@ static void
 ario_search_connectivity_changed_cb (ArioServer *server,
                                      ArioSearch *search)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         search->priv->connected = ario_server_is_connected ();
 }
 
@@ -328,7 +328,7 @@ static void
 ario_search_entry_grab_focus (GtkEntry *entry,
                               ArioSearch *search)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GTK_WIDGET_SET_FLAGS (search->priv->search_button, GTK_CAN_DEFAULT);
         gtk_widget_grab_default (search->priv->search_button);
 }
@@ -337,7 +337,7 @@ static void
 ario_search_do_plus (GtkButton *button,
                      ArioSearch *search)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkCellRenderer *renderer;
         GtkTreeIter iter, prev_iter;
         GtkWidget *image;
@@ -417,7 +417,7 @@ ario_search_do_minus (GtkButton *button,
                       ArioSearch *search)
 
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearchConstraint *search_constraint;
         GSList *tmp;
 
@@ -450,7 +450,7 @@ static void
 ario_search_do_search (GtkButton *button,
                        ArioSearch *search)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioSearchConstraint *search_constraint;
         ArioServerAtomicCriteria *atomic_criteria;
         GSList *criteria = NULL;
@@ -459,6 +459,7 @@ ario_search_do_search (GtkButton *button,
         ArioServerSong *song;
         GtkTreeIter iter;
         gchar *title;
+        GValue *value;
         GtkListStore *liststore;
 
         for (tmp = search->priv->search_constraints; tmp; tmp = g_slist_next (tmp)) {
@@ -466,10 +467,13 @@ ario_search_do_search (GtkButton *button,
 
                 atomic_criteria = (ArioServerAtomicCriteria *) g_malloc (sizeof (ArioServerAtomicCriteria));
                 gtk_combo_box_get_active_iter (GTK_COMBO_BOX (search_constraint->combo_box), &iter);
-                gtk_tree_model_get (GTK_TREE_MODEL (search->priv->list_store),
-                                    &iter,
-                                    1, &atomic_criteria->tag,
-                                    -1);
+                value = (GValue*)g_malloc(sizeof(GValue));
+                value->g_type = 0;
+                gtk_tree_model_get_value (GTK_TREE_MODEL (search->priv->list_store),
+                                          &iter,
+                                          1, value);
+                atomic_criteria->tag = g_value_get_int (value);
+                g_free (value);
                 atomic_criteria->value = (gchar *) gtk_entry_get_text (GTK_ENTRY (search_constraint->entry));
                 criteria = g_slist_append (criteria, atomic_criteria);
         }
@@ -491,6 +495,7 @@ ario_search_do_search (GtkButton *button,
                                     SONGS_ALBUM_COLUMN, song->album,
                                     SONGS_FILENAME_COLUMN, song->file,
                                     -1);
+                g_free (title);
         }
         g_slist_foreach (songs, (GFunc) ario_server_free_song, NULL);
         g_slist_free (songs);

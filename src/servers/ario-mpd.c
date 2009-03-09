@@ -28,7 +28,6 @@
 #include "ario-profiles.h"
 #include "preferences/ario-preferences.h"
 #include "ario-debug.h"
-#include "widgets/ario-playlist.h"
 #include "config.h"
 
 #define ONE_SECOND 1000
@@ -111,7 +110,7 @@ static ArioServer *server_instance = NULL;
 static void
 ario_mpd_class_init (ArioMpdClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         ArioServerInterfaceClass *server_class = ARIO_SERVER_INTERFACE_CLASS (klass);
 
@@ -160,7 +159,7 @@ ario_mpd_class_init (ArioMpdClass *klass)
 static void
 ario_mpd_init (ArioMpd *mpd)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         mpd->priv = ARIO_MPD_GET_PRIVATE (mpd);
 
         mpd->priv->use_count = 0;
@@ -170,7 +169,7 @@ ario_mpd_init (ArioMpd *mpd)
 static void
 ario_mpd_finalize (GObject *object)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioMpd *mpd;
 
         g_return_if_fail (object != NULL);
@@ -199,7 +198,7 @@ ario_mpd_finalize (GObject *object)
 ArioMpd *
 ario_mpd_get_instance (ArioServer *server)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (!instance) {
                 instance = g_object_new (TYPE_ARIO_MPD, NULL);
                 g_return_val_if_fail (instance->priv != NULL, NULL);
@@ -211,7 +210,7 @@ ario_mpd_get_instance (ArioServer *server)
 static void
 ario_mpd_check_idle (ArioMpd *mpd)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         mpd->priv->support_idle = FALSE;
 #ifdef ENABLE_MPDIDLE
         char *command;
@@ -228,7 +227,7 @@ ario_mpd_check_idle (ArioMpd *mpd)
 static void
 ario_mpd_launch_timeout (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         instance->priv->timeout_id = g_timeout_add (NORMAL_TIMEOUT,
                                                     (GSourceFunc) ario_mpd_update_status,
                                                     NULL);
@@ -238,7 +237,7 @@ ario_mpd_launch_timeout (void)
 static gboolean
 ario_mpd_update_elapsed (gpointer data)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         if (ario_server_get_current_state() == MPD_STATUS_STATE_PLAY) {
                 ++instance->priv->elapsed;
@@ -252,7 +251,7 @@ ario_mpd_update_elapsed (gpointer data)
 static void
 ario_mpd_launch_idle_timeout (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         instance->priv->timeout_id = g_timeout_add (ONE_SECOND,
                                                     (GSourceFunc) ario_mpd_update_elapsed,
                                                     NULL);
@@ -264,7 +263,7 @@ ario_mpd_idle_cb (mpd_Connection *connection,
                   unsigned flags,
                   void *userdata)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         /* TODO: Be more selective depending on flags */
         if (flags & IDLE_DATABASE
@@ -291,7 +290,8 @@ ario_mpd_connect_to (ArioMpd *mpd,
                      int port,
                      float timeout)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
+        mpd_Stats *stats;
         gchar *password;
         mpd_Connection *connection;
 
@@ -313,6 +313,16 @@ ario_mpd_connect_to (ArioMpd *mpd,
                 mpd_finishCommand (connection);
         }
 
+        mpd_sendStatsCommand (connection);
+        stats = mpd_getStats (connection);
+        mpd_finishCommand (connection);
+        if (stats == NULL) {
+                mpd_closeConnection (connection);
+                mpd->priv->connection = NULL;
+                return FALSE;
+        }
+
+        mpd_freeStats(stats);
         mpd->priv->connection = connection;
 
         ario_mpd_check_idle (mpd);
@@ -334,7 +344,7 @@ ario_mpd_connect_to (ArioMpd *mpd,
 static gpointer
 ario_mpd_connect_thread (ArioServer *server)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *hostname;
         int port;
         float timeout;
@@ -364,7 +374,7 @@ ario_mpd_connect_thread (ArioServer *server)
 static void
 ario_mpd_connect (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *win, *vbox,*label, *bar;
         GThread* thread;
         GtkWidget *dialog;
@@ -413,7 +423,7 @@ ario_mpd_connect (void)
 static void
 ario_mpd_disconnect (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -434,7 +444,7 @@ ario_mpd_disconnect (void)
 static void
 ario_mpd_update_db (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -449,7 +459,6 @@ ario_mpd_update_db (void)
 static gboolean
 ario_mpd_try_reconnect (gpointer data)
 {
-        ARIO_LOG_FUNCTION_START;
         ario_server_connect ();
         return FALSE;
 }
@@ -458,7 +467,7 @@ static void
 ario_mpd_check_errors (void)
 {
         // desactivated to make the logs more readable
-        //ARIO_LOG_FUNCTION_START;
+        //ARIO_LOG_FUNCTION_START
         if (!instance->priv->connection)
                 return;
 
@@ -476,7 +485,7 @@ static gboolean
 ario_mpd_is_connected (void)
 {
         // desactivated to make the logs more readable
-        //ARIO_LOG_FUNCTION_START;
+        //ARIO_LOG_FUNCTION_START
         return (instance->priv->connection != NULL);
 }
 
@@ -484,7 +493,7 @@ static GSList *
 ario_mpd_list_tags (const ArioServerTag tag,
                     const ArioServerCriteria *criteria)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *value;
         const GSList *tmp;
         GSList *values = NULL;
@@ -525,7 +534,6 @@ static gboolean
 ario_mpd_album_is_present (const GSList *albums,
                            const char *album)
 {
-        ARIO_LOG_FUNCTION_START;
         const GSList *tmp;
         ArioServerAlbum *mpd_album;
 
@@ -541,7 +549,7 @@ ario_mpd_album_is_present (const GSList *albums,
 static GSList *
 ario_mpd_get_albums (const ArioServerCriteria *criteria)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *albums = NULL;
         const GSList *tmp;
         mpd_InfoEntity *entity = NULL;
@@ -606,8 +614,7 @@ ario_mpd_get_albums (const ArioServerCriteria *criteria)
                 }
 
                 if (entity->info.song->file) {
-                        mpd_album->path = entity->info.song->file;
-                        entity->info.song->file = NULL;
+                        mpd_album->path = g_path_get_dirname (entity->info.song->file);
                 } else {
                         mpd_album->path = NULL;
                 }
@@ -635,7 +642,7 @@ static GSList *
 ario_mpd_get_songs (const ArioServerCriteria *criteria,
                     const gboolean exact)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *songs = NULL;
         mpd_InfoEntity *entity = NULL;
         const GSList *tmp;
@@ -689,7 +696,7 @@ ario_mpd_get_songs (const ArioServerCriteria *criteria,
 static GSList *
 ario_mpd_get_songs_from_playlist (char *playlist)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *songs = NULL;
         mpd_InfoEntity *ent = NULL;
 
@@ -714,7 +721,7 @@ ario_mpd_get_songs_from_playlist (char *playlist)
 static GSList *
 ario_mpd_get_playlists (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *playlists = NULL;
         mpd_InfoEntity *ent = NULL;
 
@@ -741,7 +748,7 @@ ario_mpd_get_playlists (void)
 static GSList *
 ario_mpd_get_playlist_changes (gint64 playlist_id)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *songs = NULL;
         mpd_InfoEntity *entity;
 
@@ -750,6 +757,7 @@ ario_mpd_get_playlist_changes (gint64 playlist_id)
                 return NULL;
 
         mpd_sendPlChangesCommand (instance->priv->connection, (long long) playlist_id);
+
         while ((entity = mpd_getNextInfoEntity (instance->priv->connection))) {
                 if (entity->info.song) {
                         songs = g_slist_append (songs, entity->info.song);
@@ -769,7 +777,7 @@ static gboolean
 ario_mpd_update_status (void)
 {
         // desactivated to make the logs more readable
-        //ARIO_LOG_FUNCTION_START;
+        //ARIO_LOG_FUNCTION_START
 
         if (instance->priv->is_updating)
                 return !instance->priv->support_idle;
@@ -832,7 +840,7 @@ ario_mpd_update_status (void)
 static ArioServerSong *
 ario_mpd_get_current_song_on_server (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerSong *song = NULL;
         mpd_InfoEntity *ent ;
 
@@ -854,19 +862,38 @@ ario_mpd_get_current_song_on_server (void)
 static int
 ario_mpd_get_current_playlist_total_time (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
+        int total_time = 0;
+        ArioServerSong *song;
+        mpd_InfoEntity *ent = NULL;
 
         if (!instance->priv->connection)
                 return 0;
 
-        /* Compute it from playlist widget (quite coslty but not often called) */
-        return ario_playlist_get_total_time ();
+        /*
+         * We go to MPD server for each call to this function but it is not a problem as it is
+         * called only once for each playlist change (by status bar). I may change this implementation
+         * if this function is called more than once for performance reasons.
+         */
+        mpd_sendPlaylistInfoCommand(instance->priv->connection, -1);
+        while ((ent = mpd_getNextInfoEntity (instance->priv->connection))) {
+                song = ent->info.song;
+                if (song->time != MPD_SONG_NO_TIME)
+                        total_time = total_time + song->time;
+                mpd_freeInfoEntity(ent);
+        }
+        mpd_finishCommand (instance->priv->connection);
+
+        if (instance->priv->support_idle && instance->priv->connection)
+                mpd_startIdle (instance->priv->connection, ario_mpd_idle_cb, NULL);
+
+        return total_time;
 }
 
 static unsigned long
 ario_mpd_get_last_update (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return 0;
@@ -890,7 +917,7 @@ ario_mpd_get_last_update (void)
 static void
 ario_mpd_do_next (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -905,7 +932,7 @@ ario_mpd_do_next (void)
 static void
 ario_mpd_do_prev (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -920,7 +947,7 @@ ario_mpd_do_prev (void)
 static void
 ario_mpd_do_play (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -935,7 +962,7 @@ ario_mpd_do_play (void)
 static void
 ario_mpd_do_play_pos (gint id)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -951,7 +978,7 @@ ario_mpd_do_play_pos (gint id)
 static void
 ario_mpd_do_pause (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -966,7 +993,7 @@ ario_mpd_do_pause (void)
 static void
 ario_mpd_do_stop (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -981,7 +1008,7 @@ ario_mpd_do_stop (void)
 static void
 ario_mpd_set_current_elapsed (const gint elapsed)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -996,7 +1023,7 @@ ario_mpd_set_current_elapsed (const gint elapsed)
 static void
 ario_mpd_set_current_volume (const gint volume)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1012,7 +1039,7 @@ ario_mpd_set_current_volume (const gint volume)
 static void
 ario_mpd_set_current_random (const gboolean random)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1027,7 +1054,7 @@ ario_mpd_set_current_random (const gboolean random)
 static void
 ario_mpd_set_current_repeat (const gboolean repeat)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1042,7 +1069,7 @@ ario_mpd_set_current_repeat (const gboolean repeat)
 static void
 ario_mpd_set_crossfadetime (const int crossfadetime)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1057,7 +1084,7 @@ ario_mpd_set_crossfadetime (const int crossfadetime)
 static void
 ario_mpd_clear (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1073,7 +1100,7 @@ ario_mpd_clear (void)
 static void
 ario_mpd_shuffle (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return;
@@ -1090,7 +1117,7 @@ ario_mpd_shuffle (void)
 static void
 ario_mpd_queue_commit (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *temp;
         ArioServerQueueAction *queue_action;
 
@@ -1140,7 +1167,7 @@ static void
 ario_mpd_insert_at (const GSList *songs,
                     const gint pos)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         int end, offset = 0;
         const GSList *tmp;
 
@@ -1161,7 +1188,7 @@ ario_mpd_insert_at (const GSList *songs,
 static int
 ario_mpd_save_playlist (const char *name)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         mpd_sendSaveCommand (instance->priv->connection, name);
         mpd_finishCommand (instance->priv->connection);
 
@@ -1176,7 +1203,7 @@ ario_mpd_save_playlist (const char *name)
 static void
 ario_mpd_delete_playlist (const char *name)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         mpd_sendRmCommand (instance->priv->connection, name);
         mpd_finishCommand (instance->priv->connection);
 
@@ -1187,7 +1214,7 @@ ario_mpd_delete_playlist (const char *name)
 static GSList *
 ario_mpd_get_outputs (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *outputs = NULL;
         mpd_OutputEntity *output_ent;
 
@@ -1212,7 +1239,7 @@ static void
 ario_mpd_enable_output (int id,
                         gboolean enabled)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         if (enabled) {
                 mpd_sendEnableOutputCommand(instance->priv->connection, id);
@@ -1229,7 +1256,7 @@ ario_mpd_enable_output (int id,
 static ArioServerStats *
 ario_mpd_get_stats (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         /* check if there is a connection */
         if (!instance->priv->connection)
                 return NULL;
@@ -1250,7 +1277,7 @@ ario_mpd_get_stats (void)
 static GList *
 ario_mpd_get_songs_info (GSList *paths)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         const gchar *path = NULL;
         GSList *temp;
         GList *songs = NULL;
@@ -1288,7 +1315,7 @@ static ArioServerFileList *
 ario_mpd_list_files (const char *path,
                      gboolean recursive)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         mpd_InfoEntity *entity;
         ArioServerFileList *files = (ArioServerFileList *) g_malloc0 (sizeof (ArioServerFileList));
 

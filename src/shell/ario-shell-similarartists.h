@@ -45,22 +45,11 @@ typedef struct
         GtkWindowClass parent_class;
 } ArioShellSimilarartistsClass;
 
-typedef struct
-{
-        guchar *name;
-        guchar *image;
-        guchar *url;
-} ArioSimilarArtist;
+GType              ario_shell_similarartists_get_type         (void) G_GNUC_CONST;
 
-GType              ario_shell_similarartists_get_type                   (void) G_GNUC_CONST;
+GtkWidget *        ario_shell_similarartists_new              (void);
 
-GtkWidget *        ario_shell_similarartists_new                        (void);
-
-GSList *           ario_shell_similarartists_get_similar_artists        (const gchar *artist);
-
-void               ario_shell_similarartists_add_similar_to_playlist    (const gchar *artist,
-                                                                         const int nb_entries);
-void               ario_shell_similarartists_free_similarartist         (ArioSimilarArtist *similar_artist);
+void               ario_shell_similarartists_add_similar_to_playlist    (const gchar *artist);
 
 G_END_DECLS
 

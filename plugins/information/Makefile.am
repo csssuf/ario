@@ -1,5 +1,4 @@
 plugindir = $(PLUGINDIR)
-plugindatadir = $(PLUGIN_DATA_DIR)
 plugin_LTLIBRARIES = libinformation.la
 
 libinformation_la_SOURCES = \
@@ -27,8 +26,8 @@ INCLUDES = 						\
         -Wnested-externs -Wpointer-arith \
         -Wcast-align -Wall
 
-uidir = $(plugindatadir)
-ui_DATA = information.ui
+gladedir = $(plugindir)
+glade_DATA = information.glade
 
 plugin_in_files = information.ario-plugin.desktop.in
 
@@ -37,7 +36,7 @@ plugin_in_files = information.ario-plugin.desktop.in
 plugin_DATA = $(plugin_in_files:.ario-plugin.desktop.in=.ario-plugin)
 
 EXTRA_DIST = $(plugin_in_files)\
-	     $(ui_DATA)
+	     $(glade_DATA)
 
 CLEANFILES = $(plugin_DATA)
 DISTCLEANFILES = $(plugin_DATA)

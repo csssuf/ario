@@ -20,14 +20,16 @@
 #include "preferences/ario-trayicon-preferences.h"
 #include <config.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <glib/gi18n.h>
 #include "preferences/ario-preferences.h"
 #include "notification/ario-notification-manager.h"
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "lib/ario-conf.h"
+#include "ario-avahi.h"
 #include "ario-debug.h"
 
 static void ario_trayicon_preferences_sync_trayicon (ArioTrayiconPreferences *trayicon_preferences);
@@ -64,23 +66,23 @@ G_DEFINE_TYPE (ArioTrayiconPreferences, ario_trayicon_preferences, GTK_TYPE_VBOX
 static void
 ario_trayicon_preferences_class_init (ArioTrayiconPreferencesClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioTrayiconPreferencesPrivate));
 }
 
 static void
 ario_trayicon_preferences_init (ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         trayicon_preferences->priv = ARIO_TRAYICON_PREFERENCES_GET_PRIVATE (trayicon_preferences);
 }
 
 GtkWidget *
 ario_trayicon_preferences_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioTrayiconPreferences *trayicon_preferences;
-        GtkBuilder *builder;
+        GladeXML *xml;
         GtkListStore *list_store;
         GtkCellRenderer *renderer;
         GtkTreeIter iter;
@@ -92,22 +94,23 @@ ario_trayicon_preferences_new (void)
 
         g_return_val_if_fail (trayicon_preferences->priv != NULL, NULL);
 
-        builder = gtk_builder_helpers_new (UI_PATH "trayicon-prefs.ui",
-                                           trayicon_preferences);
+        xml = rb_glade_xml_new (GLADE_PATH "trayicon-prefs.glade",
+                                "trayicon_vbox",
+                                trayicon_preferences);
 
         trayicon_preferences->priv->trayicon_combobox = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "trayicon_combobox"));
+                glade_xml_get_widget (xml, "trayicon_combobox");
         trayicon_preferences->priv->notification_check =
-                GTK_WIDGET (gtk_builder_get_object (builder, "notification_checkbutton"));
+                glade_xml_get_widget (xml, "notification_checkbutton");
         trayicon_preferences->priv->trayicon_check =
-                GTK_WIDGET (gtk_builder_get_object (builder, "trayicon_checkbutton"));
+                glade_xml_get_widget (xml, "trayicon_checkbutton");
         trayicon_preferences->priv->notificationtime_spinbutton = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "notificationtime_spinbutton"));
+                glade_xml_get_widget (xml, "notificationtime_spinbutton");
         trayicon_preferences->priv->notification_combobox = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "notification_combobox"));
+                glade_xml_get_widget (xml, "notification_combobox");
 
-        gtk_builder_helpers_boldify_label (builder, "trayicon_label");
-        gtk_builder_helpers_boldify_label (builder, "notification_label");
+        rb_glade_boldify_label (xml, "trayicon_label");
+        rb_glade_boldify_label (xml, "notification_label");
 
         list_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_INT);
         for (i = 0; i < TRAY_ICON_N_BEHAVIOR; ++i) {
@@ -150,14 +153,14 @@ ario_trayicon_preferences_new (void)
         ario_trayicon_preferences_sync_trayicon (trayicon_preferences);
 
 #ifndef ENABLE_EGGTRAYICON
-        GtkWidget *tray_frame = GTK_WIDGET (gtk_builder_get_object (builder, "tray_frame"));
+        GtkWidget *tray_frame = glade_xml_get_widget (xml, "tray_frame");
         gtk_widget_hide (tray_frame);
         gtk_widget_set_no_show_all (tray_frame, TRUE);
 #endif
 
-        gtk_box_pack_start (GTK_BOX (trayicon_preferences), GTK_WIDGET (gtk_builder_get_object (builder, "trayicon_vbox")), TRUE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (trayicon_preferences), glade_xml_get_widget (xml, "trayicon_vbox"), TRUE, TRUE, 0);
 
-        g_object_unref (builder);
+        g_object_unref (G_OBJECT (xml));
 
         return GTK_WIDGET (trayicon_preferences);
 }
@@ -165,8 +168,8 @@ ario_trayicon_preferences_new (void)
 static void
 ario_trayicon_preferences_sync_trayicon (ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
-        const gchar *id;
+        ARIO_LOG_FUNCTION_START
+        gchar *id;
         int i = 0;
         GSList *notifiers;
         ArioNotifier *notifier;
@@ -194,13 +197,14 @@ ario_trayicon_preferences_sync_trayicon (ArioTrayiconPreferences *trayicon_prefe
                 }
                 ++i;
         }
+        g_free (id);
 }
 
 void
 ario_trayicon_preferences_trayicon_behavior_changed_cb (GtkComboBox *combobox,
                                                         ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         int i;
 
         i = gtk_combo_box_get_active (GTK_COMBO_BOX (trayicon_preferences->priv->trayicon_combobox));
@@ -213,7 +217,7 @@ void
 ario_trayicon_preferences_notification_check_changed_cb (GtkCheckButton *butt,
                                                          ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_conf_set_boolean (PREF_HAVE_NOTIFICATION,
                                gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (trayicon_preferences->priv->notification_check)));
         gtk_widget_set_sensitive (trayicon_preferences->priv->notificationtime_spinbutton, gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (trayicon_preferences->priv->notification_check)));
@@ -224,7 +228,7 @@ void
 ario_trayicon_preferences_trayicon_check_changed_cb (GtkCheckButton *butt,
                                                      ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_conf_set_boolean (PREF_TRAY_ICON,
                                gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (trayicon_preferences->priv->trayicon_check)));
 }
@@ -233,14 +237,14 @@ void
 ario_trayicon_preferences_notificationtime_changed_cb (GtkWidget *widget,
                                                        ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_conf_set_integer (PREF_NOTIFICATION_TIME, gtk_spin_button_get_value (GTK_SPIN_BUTTON (trayicon_preferences->priv->notificationtime_spinbutton)));
 }
 void
 ario_trayicon_preferences_notification_combobox_changed_cb (GtkComboBox *combobox,
                                                             ArioTrayiconPreferences *trayicon_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkTreeIter iter;
         gchar *id;
 

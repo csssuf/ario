@@ -44,7 +44,6 @@ ario_source_class_init (ArioSourceClass *klass)
         klass->shutdown = dummy;
         klass->select = dummy;
         klass->unselect = dummy;
-        klass->goto_playling_song = dummy;
 }
 
 static void
@@ -99,12 +98,4 @@ ario_source_unselect (ArioSource *source)
         g_return_if_fail (ARIO_IS_SOURCE (source));
 
         ARIO_SOURCE_GET_CLASS (source)->unselect (source);
-}
-
-void
-ario_source_goto_playling_song (ArioSource *source)
-{
-        g_return_if_fail (ARIO_IS_SOURCE (source));
-
-        ARIO_SOURCE_GET_CLASS (source)->goto_playling_song (source);
 }

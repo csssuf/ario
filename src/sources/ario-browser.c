@@ -127,25 +127,10 @@ ario_browser_get_icon (ArioSource *source)
         return GTK_STOCK_HOME;
 }
 
-static void ario_browser_goto_playling_song (ArioSource *source)
-{
-        ARIO_LOG_FUNCTION_START;
-        ArioBrowser *browser = ARIO_BROWSER (source);
-        GSList *tmp;
-        ArioServerSong *song = ario_server_get_current_song ();
-
-        if (!song)
-                return;
-
-        for (tmp = browser->priv->trees; tmp; tmp = g_slist_next (tmp)) {
-                ario_tree_goto_playling_song (ARIO_TREE (tmp->data), song);
-        }
-}
-
 static void
 ario_browser_class_init (ArioBrowserClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         ArioSourceClass *source_class = ARIO_SOURCE_CLASS (klass);
 
@@ -157,7 +142,6 @@ ario_browser_class_init (ArioBrowserClass *klass)
         source_class->get_id = ario_browser_get_id;
         source_class->get_name = ario_browser_get_name;
         source_class->get_icon = ario_browser_get_icon;
-        source_class->goto_playling_song = ario_browser_goto_playling_song;
 
         g_object_class_install_property (object_class,
                                          PROP_UI_MANAGER,
@@ -173,7 +157,7 @@ ario_browser_class_init (ArioBrowserClass *klass)
 static void
 ario_browser_init (ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         browser->priv = ARIO_BROWSER_GET_PRIVATE (browser);
 
@@ -183,7 +167,7 @@ ario_browser_init (ArioBrowser *browser)
 static void
 ario_browser_finalize (GObject *object)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioBrowser *browser;
 
         g_return_if_fail (object != NULL);
@@ -203,7 +187,7 @@ ario_browser_set_property (GObject *object,
                            const GValue *value,
                            GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioBrowser *browser = ARIO_BROWSER (object);
 
         switch (prop_id) {
@@ -222,7 +206,7 @@ ario_browser_get_property (GObject *object,
                            GValue *value,
                            GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioBrowser *browser = ARIO_BROWSER (object);
 
         switch (prop_id) {
@@ -239,7 +223,7 @@ GtkWidget *
 ario_browser_new (GtkUIManager *mgr,
                   GtkActionGroup *group)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioBrowser *browser;
         ArioServer *server = ario_server_get_instance ();
 
@@ -279,12 +263,12 @@ ario_browser_new (GtkUIManager *mgr,
 static void
 ario_browser_reload_trees (ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *tree;
         gboolean is_first = TRUE;
         int i;
         gchar **splited_conf;
-        const gchar *conf;
+        gchar *conf;
         GSList *tmp;
 
         /* Remove all trees */
@@ -296,6 +280,7 @@ ario_browser_reload_trees (ArioBrowser *browser)
 
         conf = ario_conf_get_string (PREF_BROWSER_TREES, PREF_BROWSER_TREES_DEFAULT);
         splited_conf = g_strsplit (conf, ",", MAX_TREE_NB);
+        g_free (conf);
         for (i = 0; splited_conf[i]; ++i) {
                 tree = ario_tree_new (browser->priv->ui_manager,
                                       atoi (splited_conf[i]),
@@ -322,7 +307,7 @@ static void
 ario_browser_trees_changed_cb (guint notification_id,
                                ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_browser_reload_trees (browser);
         ario_browser_fill_first (browser);
 }
@@ -331,7 +316,7 @@ static void
 ario_browser_connectivity_changed_cb (ArioServer *server,
                                       ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_browser_fill_first (browser);
 }
 
@@ -339,7 +324,7 @@ static void
 ario_browser_dbtime_changed_cb (ArioServer *server,
                                 ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (!ario_server_get_updating ())
                 ario_browser_fill_first (browser);
 }
@@ -347,7 +332,7 @@ ario_browser_dbtime_changed_cb (ArioServer *server,
 static void
 ario_browser_fill_first (ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
 
         if (browser->priv->trees && browser->priv->trees->data)
                 ario_tree_fill (ARIO_TREE (browser->priv->trees->data));
@@ -357,7 +342,7 @@ static void
 ario_browser_tree_selection_changed_cb (ArioTree *tree,
                                         ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioTree *next_tree = NULL;
         GSList *tmp, *criterias;
 
@@ -381,7 +366,7 @@ static void
 ario_browser_menu_popup_cb (ArioTree *tree,
                             ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         browser->priv->popup_tree = tree;
 }
 
@@ -389,7 +374,7 @@ static void
 ario_browser_cmd_add (GtkAction *action,
                       ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_add (browser->priv->popup_tree, FALSE);
 }
@@ -398,7 +383,7 @@ static void
 ario_browser_cmd_add_play (GtkAction *action,
                            ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_add (browser->priv->popup_tree, TRUE);
 }
@@ -407,7 +392,7 @@ static void
 ario_browser_cmd_clear_add_play (GtkAction *action,
                                  ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree) {
                 ario_server_clear ();
                 ario_tree_cmd_add (browser->priv->popup_tree, TRUE);
@@ -418,7 +403,7 @@ static void
 ario_browser_cmd_get_cover (GtkAction *action,
                             ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_get_cover (browser->priv->popup_tree);
 }
@@ -427,7 +412,7 @@ static void
 ario_browser_cmd_remove_cover (GtkAction *action,
                                ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_remove_cover (browser->priv->popup_tree);
 }
@@ -436,7 +421,7 @@ static void
 ario_browser_cmd_albums_properties (GtkAction *action,
                                     ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_albums_properties (browser->priv->popup_tree);
 }
@@ -445,7 +430,7 @@ static void
 ario_browser_cmd_songs_properties (GtkAction *action,
                                    ArioBrowser *browser)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         if (browser->priv->popup_tree)
                 ario_tree_cmd_songs_properties (browser->priv->popup_tree);
 }

@@ -35,24 +35,32 @@ typedef struct ArioPlaylistPrivate ArioPlaylistPrivate;
 
 typedef struct
 {
-        GtkVBox parent;
+        GtkScrolledWindow parent;
 
         ArioPlaylistPrivate *priv;
 } ArioPlaylist;
 
 typedef struct
 {
-        GtkVBoxClass parent;
+        GtkScrolledWindowClass parent;
 } ArioPlaylistClass;
 
 GType           ario_playlist_get_type          (void) G_GNUC_CONST;
 
 GtkWidget *     ario_playlist_new               (GtkUIManager *mgr,
                                                  GtkActionGroup *group);
+
+void            ario_playlist_append_artists    (const GSList *artists,
+                                                 const gboolean play);
+void            ario_playlist_append_songs      (const GSList *songs,
+                                                 const gboolean play);
+void            ario_playlist_append_server_songs  (const GSList *songs,
+                                                 const gboolean play);
+void            ario_playlist_append_dir        (const gchar *dir,
+                                                 const gboolean play);
+void            ario_playlist_append_criterias  (const GSList *criterias,
+                                                 const gboolean play);
 void            ario_playlist_shutdown          (void);
-
-gint            ario_playlist_get_total_time    (void);
-
 G_END_DECLS
 
 #endif /* __ARIO_PLAYLIST_H */

@@ -20,12 +20,13 @@
 #include "preferences/ario-browser-preferences.h"
 #include <config.h>
 #include <gtk/gtk.h>
+#include <glade/glade.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <glib/gi18n.h>
 #include "preferences/ario-preferences.h"
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "lib/ario-conf.h"
 #include "sources/ario-browser.h"
 #include "sources/ario-tree.h"
@@ -60,23 +61,23 @@ G_DEFINE_TYPE (ArioBrowserPreferences, ario_browser_preferences, GTK_TYPE_VBOX)
 static void
 ario_browser_preferences_class_init (ArioBrowserPreferencesClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_type_class_add_private (klass, sizeof (ArioBrowserPreferencesPrivate));
 }
 
 static void
 ario_browser_preferences_init (ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         browser_preferences->priv = ARIO_BROWSER_PREFERENCES_GET_PRIVATE (browser_preferences);
 }
 
 GtkWidget *
 ario_browser_preferences_new (void)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioBrowserPreferences *browser_preferences;
-        GtkBuilder *builder;
+        GladeXML *xml;
         GtkListStore *list_store;
         GtkCellRenderer *renderer;
         GtkTreeIter iter;
@@ -86,18 +87,19 @@ ario_browser_preferences_new (void)
 
         g_return_val_if_fail (browser_preferences->priv != NULL, NULL);
 
-        builder = gtk_builder_helpers_new (UI_PATH "browser-prefs.ui",
-                                           browser_preferences);
+        xml = rb_glade_xml_new (GLADE_PATH "browser-prefs.glade",
+                                "browser_vbox",
+                                browser_preferences);
 
         browser_preferences->priv->sort_combobox = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "sort_combobox"));
+                glade_xml_get_widget (xml, "sort_combobox");
         browser_preferences->priv->hbox = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "trees_hbox"));
+                glade_xml_get_widget (xml, "trees_hbox");
         browser_preferences->priv->treesnb_spinbutton = 
-                GTK_WIDGET (gtk_builder_get_object (builder, "treesnb_spinbutton"));
+                glade_xml_get_widget (xml, "treesnb_spinbutton");
 
-        gtk_builder_helpers_boldify_label (builder, "options_label");
-        gtk_builder_helpers_boldify_label (builder, "organisation_label");
+        rb_glade_boldify_label (xml, "options_label");
+        rb_glade_boldify_label (xml, "organisation_label");
 
         list_store = gtk_list_store_new (2, G_TYPE_STRING, G_TYPE_INT);
         for (i = 0; i < SORT_N_BEHAVIOR; ++i) {
@@ -119,9 +121,9 @@ ario_browser_preferences_new (void)
 
         ario_browser_preferences_sync_browser (browser_preferences);
 
-        gtk_box_pack_start (GTK_BOX (browser_preferences), GTK_WIDGET (gtk_builder_get_object (builder, "browser_vbox")), TRUE, TRUE, 0);
+        gtk_box_pack_start (GTK_BOX (browser_preferences), glade_xml_get_widget (xml, "browser_vbox"), TRUE, TRUE, 0);
 
-        g_object_unref (builder);
+        g_object_unref (G_OBJECT (xml));
 
         return GTK_WIDGET (browser_preferences);
 }
@@ -129,11 +131,11 @@ ario_browser_preferences_new (void)
 static void
 ario_browser_preferences_sync_browser (ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *tree_combobox;
         int i, j;
         gchar **splited_conf;
-        const gchar *conf;
+        gchar *conf;
         GSList *tmp;
         GtkListStore *list_store;
         GtkCellRenderer *renderer;
@@ -153,6 +155,7 @@ ario_browser_preferences_sync_browser (ArioBrowserPreferences *browser_preferenc
 
         conf = ario_conf_get_string (PREF_BROWSER_TREES, PREF_BROWSER_TREES_DEFAULT);
         splited_conf = g_strsplit (conf, ",", MAX_TREE_NB);
+        g_free (conf);
         items = ario_server_get_items_names ();
         for (i = 0; splited_conf[i]; ++i) {
                 tree_combobox = gtk_combo_box_new ();
@@ -201,7 +204,7 @@ void
 ario_browser_preferences_sort_changed_cb (GtkComboBoxEntry *combobox,
                                           ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         int i;
 
         i = gtk_combo_box_get_active (GTK_COMBO_BOX (browser_preferences->priv->sort_combobox));
@@ -213,10 +216,9 @@ ario_browser_preferences_sort_changed_cb (GtkComboBoxEntry *combobox,
 static gboolean
 ario_browser_preferences_treesnb_changed_idle (ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar **splited_conf;
-        const gchar *conf;
-        gchar *new_conf, *tmp;
+        gchar *conf, *new_conf, *tmp;
         int old_nb, new_nb, i;
 
         conf = ario_conf_get_string (PREF_BROWSER_TREES, PREF_BROWSER_TREES_DEFAULT);
@@ -242,6 +244,7 @@ ario_browser_preferences_treesnb_changed_idle (ArioBrowserPreferences *browser_p
                 ario_browser_preferences_sync_browser (browser_preferences);
         }
         g_strfreev (splited_conf);
+        g_free (conf);
 
         return FALSE;
 }
@@ -250,7 +253,7 @@ void
 ario_browser_preferences_treesnb_changed_cb (GtkWidget *widget,
                                              ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         g_idle_add ((GSourceFunc) ario_browser_preferences_treesnb_changed_idle, browser_preferences);
 }
 
@@ -258,27 +261,29 @@ static void
 ario_browser_preferences_tree_combobox_changed_cb (GtkComboBox *widget,
                                                    ArioBrowserPreferences *browser_preferences)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GSList *temp;
         GtkComboBox *combobox;
         gchar *conf = NULL, *tmp;
-        int value;
+        GValue *value;
         GtkTreeIter iter;
 
         for (temp = browser_preferences->priv->tree_comboboxs; temp; temp = g_slist_next (temp)) {
                 combobox = temp->data;
                 gtk_combo_box_get_active_iter (combobox, &iter);
-                gtk_tree_model_get (gtk_combo_box_get_model (combobox),
-                                    &iter,
-                                    1, &value,
-                                    -1);
+                value = (GValue*)g_malloc(sizeof(GValue));
+                value->g_type = 0;
+                gtk_tree_model_get_value (gtk_combo_box_get_model (combobox),
+                                          &iter,
+                                          1, value);
                 if (!conf) {
-                        conf = g_strdup_printf ("%d", value);
+                        conf = g_strdup_printf ("%d", g_value_get_int (value));
                 } else {
-                        tmp = g_strdup_printf ("%s,%d", conf, value);
+                        tmp = g_strdup_printf ("%s,%d", conf, g_value_get_int (value));
                         g_free (conf);
                         conf = tmp;
                 }
+                g_free (value);
         }
         ario_conf_set_string (PREF_BROWSER_TREES, conf);
         g_free (conf);

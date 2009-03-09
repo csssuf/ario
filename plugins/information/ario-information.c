@@ -27,7 +27,7 @@
 #include "plugins/ario-plugin.h"
 #include "covers/ario-cover-handler.h"
 #include "widgets/ario-playlist.h"
-#include "lib/gtk-builder-helpers.h"
+#include "lib/rb-glade-helpers.h"
 #include "lyrics/ario-lyrics.h"
 #include "covers/ario-cover.h"
 #include "servers/ario-server.h"
@@ -139,7 +139,7 @@ ario_information_unselect (ArioSource *source)
 static void
 ario_information_class_init (ArioInformationClass *klass)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
         ArioSourceClass *source_class = ARIO_SOURCE_CLASS (klass);
 
@@ -177,22 +177,22 @@ ario_information_button_press_cb (GtkWidget *widget,
                                   GdkEventButton *event,
                                   ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         return TRUE;
 }
 
 static void
 ario_information_init (ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GtkWidget *scrolledwindow;
         GtkWidget *vbox, *vp;
-        GtkBuilder *builder;
+        GladeXML *xml;
         gchar *file;
 
         information->priv = ARIO_INFORMATION_GET_PRIVATE (information);
 
-        file = ario_plugin_find_file ("information.ui");
+        file = ario_plugin_find_file ("information.glade");
         g_return_if_fail (file);
 
         scrolledwindow = gtk_scrolled_window_new (NULL, NULL);
@@ -202,34 +202,34 @@ ario_information_init (ArioInformation *information)
         vp = gtk_viewport_new (gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (scrolledwindow)),
                                gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolledwindow)));
 
-        builder = gtk_builder_helpers_new (file, information);
+        xml = rb_glade_xml_new (file, "vbox", information);
         g_free (file);
 
-        vbox = GTK_WIDGET (gtk_builder_get_object (builder, "vbox"));
+        vbox = glade_xml_get_widget (xml, "vbox");
         g_signal_connect (vbox,
                           "style-set",
                           G_CALLBACK (ario_information_style_set_cb),
                           vp);
 
-        information->priv->artist_label = GTK_WIDGET (gtk_builder_get_object (builder, "artist_label"));
-        information->priv->album_label = GTK_WIDGET (gtk_builder_get_object (builder, "album_label"));
-        information->priv->title_label = GTK_WIDGET (gtk_builder_get_object (builder, "title_label"));
-        information->priv->length_label = GTK_WIDGET (gtk_builder_get_object (builder, "length_label"));
-        information->priv->lyrics_label = GTK_WIDGET (gtk_builder_get_object (builder, "lyrics_const_label"));
-        information->priv->lyrics_textview = GTK_WIDGET (gtk_builder_get_object (builder, "lyrics_textview"));
-        information->priv->cover_image = GTK_WIDGET (gtk_builder_get_object (builder, "cover_image"));
-        information->priv->properties_hbox = GTK_WIDGET (gtk_builder_get_object (builder, "properties_hbox"));
-        information->priv->albums_hbox = GTK_WIDGET (gtk_builder_get_object (builder, "albums_hbox"));
-        information->priv->albums_const_label = GTK_WIDGET (gtk_builder_get_object (builder, "albums_const_label"));
+        information->priv->artist_label = glade_xml_get_widget (xml, "artist_label");
+        information->priv->album_label = glade_xml_get_widget (xml, "album_label");
+        information->priv->title_label = glade_xml_get_widget (xml, "title_label");
+        information->priv->length_label = glade_xml_get_widget (xml, "length_label");
+        information->priv->lyrics_label = glade_xml_get_widget (xml, "lyrics_const_label");
+        information->priv->lyrics_textview = glade_xml_get_widget (xml, "lyrics_textview");
+        information->priv->cover_image = glade_xml_get_widget (xml, "cover_image");
+        information->priv->properties_hbox = glade_xml_get_widget (xml, "properties_hbox");
+        information->priv->albums_hbox = glade_xml_get_widget (xml, "albums_hbox");
+        information->priv->albums_const_label = glade_xml_get_widget (xml, "albums_const_label");
 
         information->priv->lyrics_textbuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (information->priv->lyrics_textview));
 
-        gtk_builder_helpers_boldify_label (builder, "artist_const_label");
-        gtk_builder_helpers_boldify_label (builder, "album_const_label");
-        gtk_builder_helpers_boldify_label (builder, "title_const_label");
-        gtk_builder_helpers_boldify_label (builder, "length_const_label");
-        gtk_builder_helpers_boldify_label (builder, "albums_const_label");
-        gtk_builder_helpers_boldify_label (builder, "lyrics_const_label");
+        rb_glade_boldify_label (xml, "artist_const_label");
+        rb_glade_boldify_label (xml, "album_const_label");
+        rb_glade_boldify_label (xml, "title_const_label");
+        rb_glade_boldify_label (xml, "length_const_label");
+        rb_glade_boldify_label (xml, "albums_const_label");
+        rb_glade_boldify_label (xml, "lyrics_const_label");
 
         g_signal_connect (ario_cover_handler_get_instance (),
                           "cover_changed",
@@ -246,13 +246,12 @@ ario_information_init (ArioInformation *information)
 
         gtk_widget_show_all (scrolledwindow);
         gtk_box_pack_start (GTK_BOX (information), scrolledwindow, TRUE, TRUE, 0);
-        g_object_unref (builder);
 }
 
 static void
 ario_information_finalize (GObject *object)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioInformation *information;
 
         g_return_if_fail (object != NULL);
@@ -277,7 +276,7 @@ ario_information_set_property (GObject *object,
                                const GValue *value,
                                GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioInformation *information = ARIO_INFORMATION (object);
 
         switch (prop_id) {
@@ -296,7 +295,7 @@ ario_information_get_property (GObject *object,
                                GValue *value,
                                GParamSpec *pspec)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioInformation *information = ARIO_INFORMATION (object);
 
         switch (prop_id) {
@@ -312,7 +311,7 @@ ario_information_get_property (GObject *object,
 GtkWidget *
 ario_information_new (GtkUIManager *mgr)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioInformation *information;
         ArioServer *server = ario_server_get_instance ();
 
@@ -347,7 +346,7 @@ ario_information_new (GtkUIManager *mgr)
 static void
 ario_information_fill_song (ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerSong *song;
         gchar *length;
         ArioLyrics *lyrics;
@@ -392,7 +391,7 @@ ario_information_fill_song (ArioInformation *information)
 static void
 ario_information_fill_cover (ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         GdkPixbuf *cover;
 
         if (!information->priv->selected)
@@ -412,7 +411,7 @@ ario_information_album_foreach (GtkWidget *widget,
 static void
 ario_information_fill_album (ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerSong *song;
         int state;
         ArioServerAtomicCriteria atomic_criteria;
@@ -461,7 +460,7 @@ ario_information_fill_album (ArioInformation *information)
                     || (album->album && song->album && !strcmp (album->album, song->album)))
                         continue;
 
-                cover_path = ario_cover_make_cover_path (album->artist, album->album, SMALL_COVER);
+                cover_path = ario_cover_make_ario_cover_path (album->artist, album->album, SMALL_COVER);
                 pixbuf = gdk_pixbuf_new_from_file_at_size (cover_path, COVER_SIZE, COVER_SIZE, NULL);
                 g_free (cover_path);
                 if (pixbuf) {
@@ -500,7 +499,7 @@ static void
 ario_information_state_changed_cb (ArioServer *server,
                                    ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         information->priv->connected = ario_server_is_connected ();
         ario_information_fill_song (information);
         ario_information_fill_cover (information);
@@ -511,7 +510,7 @@ static void
 ario_information_song_changed_cb (ArioServer *server,
                                   ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_information_fill_song (information);
 }
 
@@ -519,7 +518,7 @@ static void
 ario_information_cover_changed_cb (ArioCoverHandler *cover_handler,
                                    ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_information_fill_cover (information);
 }
 
@@ -527,7 +526,7 @@ static void
 ario_information_album_changed_cb (ArioServer *server,
                                    ArioInformation *information)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ario_information_fill_album (information);
 }
 
@@ -537,7 +536,7 @@ ario_information_cover_drag_data_get_cb (GtkWidget *widget,
                                          GtkSelectionData *selection_data,
                                          guint info, guint time, ArioServerAlbum *album)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         gchar *str;
 
         str = g_strdup_printf ("2\n%d\n%s\n%d\n%s\n", MPD_TAG_ITEM_ARTIST, album->artist, MPD_TAG_ITEM_ALBUM, album->album);
@@ -552,7 +551,7 @@ ario_information_cover_button_press_cb (GtkWidget *widget,
                                         GdkEventButton *event,
                                         ArioServerAlbum *album)
 {
-        ARIO_LOG_FUNCTION_START;
+        ARIO_LOG_FUNCTION_START
         ArioServerAtomicCriteria atomic_criteria1;
         ArioServerAtomicCriteria atomic_criteria2;
         ArioServerCriteria *criteria = NULL;
@@ -569,7 +568,7 @@ ario_information_cover_button_press_cb (GtkWidget *widget,
 
                 criterias = g_slist_append (criterias, criteria);
 
-                ario_server_playlist_append_criterias (criterias, FALSE, -1);
+                ario_playlist_append_criterias (criterias, FALSE);
 
                 g_slist_free (criteria);
                 g_slist_free (criterias);

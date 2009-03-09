@@ -1,5 +1,4 @@
 plugindir = $(PLUGINDIR)
-plugindatadir = $(PLUGIN_DATA_DIR)
 plugin_LTLIBRARIES = libfilesystem.la
 
 libfilesystem_la_SOURCES = \
@@ -10,7 +9,7 @@ libfilesystem_la_SOURCES = \
 	
 libfilesystem_la_LDFLAGS = $(PLUGIN_LIBTOOL_FLAGS)
 
-uixmldir = $(plugindatadir)
+uixmldir = $(plugindir)
 uixml_DATA = filesystem-ui.xml
 
 INCLUDES = 						\

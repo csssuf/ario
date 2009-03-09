@@ -63,8 +63,6 @@ typedef struct
         void            (*select)                       (ArioSource *source);
 
         void            (*unselect)                     (ArioSource *source);
-
-        void            (*goto_playling_song)           (ArioSource *source);
 } ArioSourceClass;
 
 /*
@@ -83,8 +81,6 @@ void            ario_source_shutdown            (ArioSource *source);
 void            ario_source_select              (ArioSource *source);
 
 void            ario_source_unselect            (ArioSource *source);
-
-void            ario_source_goto_playling_song  (ArioSource *source);
 
 G_END_DECLS
 

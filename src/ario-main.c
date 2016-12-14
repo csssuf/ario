@@ -112,9 +112,6 @@ main (int argc, char *argv[])
         textdomain (GETTEXT_PACKAGE);
 #endif
 
-        /* Initialisation of threads */
-        if (!g_thread_supported ()) g_thread_init (NULL);
-
         /* Initialisation of GTK */
         setlocale (LC_ALL, "");
         gtk_init (&argc, &argv);

@@ -158,10 +158,9 @@ ario_lyrics_editor_new (void)
         lyrics_editor->priv->queue = g_async_queue_new ();
 
         /* Thread for lyrics download */
-        lyrics_editor->priv->thread = g_thread_create ((GThreadFunc) ario_lyrics_editor_get_lyrics_thread,
-                                                       lyrics_editor,
-                                                       TRUE,
-                                                       NULL);
+        lyrics_editor->priv->thread = g_thread_new ("ario_lyrics_editor_get_lyrics",
+                                                    (GThreadFunc) ario_lyrics_editor_get_lyrics_thread,
+                                                    lyrics_editor);
         return GTK_WIDGET (lyrics_editor);
 }
 
